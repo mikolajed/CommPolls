@@ -16,3 +16,19 @@ A simple Django-based community polling application.
 ```bash
 git clone https://github.com/mikolajed/CommPolls.git
 cd CommPolls
+```
+## ⚠️ Python Version
+
+This project currently does **not work with Python 3.14** due to Django compatibility issues.
+
+Please use **Python 3.12** (recommended) or **Python 3.11** when setting up your environment.
+
+You can install it with [pyenv](https://github.com/pyenv/pyenv):
+
+```bash
+pyenv install 3.12.6
+pyenv local 3.12.6
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
