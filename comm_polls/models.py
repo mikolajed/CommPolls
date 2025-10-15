@@ -34,10 +34,14 @@ class Choice(models.Model):
     poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name="choices")
     name = models.CharField(max_length=200)
     details = models.TextField(blank=True)
-    votes = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.name}"
+
+    @property
+    def vote_count(self):
+        """Returns the number of votes for this choice"""
+        return self.vote_set.count()
 
 
 class Vote(models.Model):
@@ -47,7 +51,7 @@ class Vote(models.Model):
     voted_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ("poll", "voter")  # each user can vote only once per poll
+        unique_together = ("poll", "voter")
 
     def __str__(self):
         return f"{self.voter} voted on {self.poll}"
