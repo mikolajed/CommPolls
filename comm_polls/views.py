@@ -21,6 +21,7 @@ def signup(request):
     return render(request, "comm_polls/signup.html", {"form": form})
 
 
+@login_required
 def account_settings(request):
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, request.FILES, instance=request.user)

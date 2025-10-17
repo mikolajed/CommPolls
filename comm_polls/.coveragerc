@@ -1,0 +1,13 @@
+[run]
+branch = True
+source = 
+    comm_polls
+
+[report]
+omit =
+    */migrations/*
+    */tests/*
+    */__init__.py
+    manage.py
+show_missing = True
+skip_covered = False

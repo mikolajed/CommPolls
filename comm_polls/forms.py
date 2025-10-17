@@ -15,10 +15,13 @@ class SignUpForm(UserCreationForm):
         user = super().save(commit)
         if commit:
             avatar = self.cleaned_data.get('avatar')
+            # Ensure profile exists
+            profile, created = Profile.objects.get_or_create(user=user)
             if avatar:
-                user.profile.avatar = avatar
-                user.profile.save()
+                profile.avatar = avatar
+                profile.save()
         return user
+
 
 class UserUpdateForm(forms.ModelForm):
     avatar = forms.ImageField(required=False)
@@ -29,8 +32,11 @@ class UserUpdateForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit)
-        avatar = self.cleaned_data.get('avatar')
-        if avatar:
-            user.profile.avatar = avatar
-            user.profile.save()
+        if commit:
+            avatar = self.cleaned_data.get('avatar')
+            # Ensure profile exists
+            profile, created = Profile.objects.get_or_create(user=user)
+            if avatar:
+                profile.avatar = avatar
+                profile.save()
         return user
