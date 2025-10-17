@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1>Create a new account</h1>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.non_field_errors }}
         {{ form.as_p }}
