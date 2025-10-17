@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Account Settings - CommPolls</title>
+</head>
+<body>
+    <h1>Account Settings</h1>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <p>
+        <a href="{% url 'comm_polls:password_change' %}">Change Password</a> |
+        <a href="{% url 'comm_polls:home' %}">Back to Home</a>
+    </p>
+</body>
+</html>

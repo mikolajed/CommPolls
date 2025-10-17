@@ -6,9 +6,16 @@
 <body>
     <h1>Welcome to CommPolls!</h1>
     {% if user.is_authenticated %}
-        <p>Hello, {{ user.username }}! <a href="{% url 'logout' %}">Logout</a></p>
+        <p>
+            Hello, {{ user.username }}! 
+            <a href="{% url 'comm_polls:account_settings' %}">Account Settings</a> | 
+            <a href="{% url 'logout' %}">Logout</a>
+        </p>
     {% else %}
-        <p><a href="{% url 'comm_polls:signup' %}">Sign up</a> or <a href="{% url 'login' %}">Login</a></p>
+        <p>
+            <a href="{% url 'comm_polls:signup' %}">Sign up</a> or 
+            <a href="{% url 'login' %}">Login</a>
+        </p>
     {% endif %}
 </body>
 </html>
