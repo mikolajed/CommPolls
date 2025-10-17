@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Profile
+from .models import Profile, Poll, Choice
+from django.forms import inlineformset_factory
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -43,3 +44,19 @@ class UserUpdateForm(forms.ModelForm):
                 profile.avatar = avatar
                 profile.save()
         return user
+
+
+class PollForm(forms.ModelForm):
+    class Meta:
+        model = Poll
+        fields = ['name', 'description', 'start_date', 'end_date']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+            'start_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
+# Inline formset for choices related to a poll
+ChoiceFormSet = inlineformset_factory(
+    Poll, Choice, fields=('name', 'details'), extra=2, can_delete=True
+)

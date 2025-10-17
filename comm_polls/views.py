@@ -2,9 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import SignUpForm, UserUpdateForm
+from .forms import SignUpForm, UserUpdateForm, PollForm, ChoiceFormSet
 from .models import Poll
-
 
 def home(request):
     """Home page showing all polls."""
@@ -27,8 +26,27 @@ def my_votes(request):
 
 @login_required
 def create_poll(request):
-    """Create a new poll (placeholder)."""
-    return render(request, "comm_polls/create_poll.html")
+    if request.method == 'POST':
+        poll_form = PollForm(request.POST)
+        choice_formset = ChoiceFormSet(request.POST)
+        if poll_form.is_valid() and choice_formset.is_valid():
+            poll = poll_form.save(commit=False)
+            poll.created_by = request.user
+            poll.save()
+            # Save choices
+            choice_formset.instance = poll
+            choice_formset.save()
+            messages.success(request, 'Poll created successfully!')
+            return redirect('comm_polls:polls')
+    else:
+        poll_form = PollForm()
+        choice_formset = ChoiceFormSet()
+
+    return render(
+        request, 
+        'comm_polls/create_poll.html', 
+        {'poll_form': poll_form, 'choice_formset': choice_formset}
+    )
 
 
 @login_required

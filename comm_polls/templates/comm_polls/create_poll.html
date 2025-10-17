@@ -13,6 +13,30 @@
         <a href="{% url 'logout' %}">Logout</a>
     </p>
 
-    <p>Poll creation form coming soon.</p>
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Poll Details</legend>
+            {{ poll_form.as_p }}
+        </fieldset>
+
+        <fieldset>
+            <legend>Choices</legend>
+            {{ choice_formset.management_form }}
+            {% for form in choice_formset %}
+                {{ form.as_p }}
+            {% endfor %}
+        </fieldset>
+
+        <button type="submit">Create Poll</button>
+    </form>
 </body>
 </html>
