@@ -4,26 +4,52 @@
     <title>CommPolls</title>
 </head>
 <body>
-    <h1>Welcome to CommPolls!</h1>
+    {% load static %}
 
     {% if user.is_authenticated %}
-        {% load static %}
-        <p>
+        <!-- Header -->
+        <div>
             {% if user.profile.avatar %}
                 <img src="{{ user.profile.avatar.url }}" alt="Avatar" style="width:50px;height:50px;border-radius:50%;">
             {% else %}
-                <span style="font-size:50px;">👤</span> 
+                <span style="font-size:40px;">👤</span>
             {% endif %}
-            Hello, {{ user.username }}! 
-            <a href="{% url 'comm_polls:account_settings' %}">Account Settings</a> | 
+            <strong>Hello, {{ user.username }}!</strong>
+        </div>
+
+        <!-- Navigation Bar -->
+        <p>
+            <a href="{% url 'comm_polls:home' %}">Home</a> |
+            <a href="{% url 'comm_polls:polls' %}">Polls</a> |
+            <a href="{% url 'comm_polls:votes' %}">My Votes</a> |
+            <a href="{% url 'comm_polls:create_poll' %}">Create Poll</a> |
+            <a href="{% url 'comm_polls:account_settings' %}">Settings</a> |
             <a href="{% url 'logout' %}">Logout</a>
         </p>
+
+        <hr>
+
+        <!-- Poll List -->
+        <h2>All Polls</h2>
+        {% if polls %}
+            <ul>
+                {% for poll in polls %}
+                    <li>
+                        <a href="{% url 'comm_polls:vote' poll.id %}">{{ poll.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No polls available.</p>
+        {% endif %}
+
     {% else %}
+        <!-- Guest View -->
+        <h1>Welcome to CommPolls!</h1>
         <p>
             <a href="{% url 'comm_polls:signup' %}">Sign up</a> or 
             <a href="{% url 'login' %}">Login</a>
         </p>
     {% endif %}
-
 </body>
 </html>

@@ -8,6 +8,11 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("signup/", views.signup, name="signup"),
     path("account_settings/", views.account_settings, name="account_settings"),
+    path('polls/', views.polls_list, name='polls'),        
+    path('votes/', views.my_votes, name='votes'),
+    path('polls/create/', views.create_poll, name='create_poll'),
+    path('polls/<int:poll_id>/manage/', views.manage_poll, name='manage_poll'),
+    path('polls/<int:poll_id>/vote/', views.vote, name='vote'),
     path(
         'password_change/',
         auth_views.PasswordChangeView.as_view(
