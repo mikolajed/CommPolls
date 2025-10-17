@@ -1,15 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import SignUpForm, UserUpdateForm
 from .models import Poll
 
-def home(request):
-    polls = Poll.objects.all()
-    return render(request, 'comm_polls/home.html', {'polls': polls})
 
 def home(request):
+    """Home page showing all polls."""
     polls = Poll.objects.all()
     return render(request, "comm_polls/home.html", {"polls": polls})
 
@@ -23,8 +21,7 @@ def polls_list(request):
 
 @login_required
 def my_votes(request):
-    """Show polls the user has voted on."""
-    # Placeholder — adjust once Vote model exists
+    """Show polls the user has voted on (placeholder)."""
     return render(request, "comm_polls/my_votes.html")
 
 
@@ -49,6 +46,7 @@ def vote(request, poll_id):
 
 
 def signup(request):
+    """Sign-up view for new users."""
     if request.method == "POST":
         form = SignUpForm(request.POST, request.FILES)
         if form.is_valid():
@@ -62,6 +60,7 @@ def signup(request):
 
 @login_required
 def account_settings(request):
+    """Allow users to update account details."""
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():

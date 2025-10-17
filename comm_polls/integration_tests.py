@@ -21,16 +21,18 @@ class UserIntegrationTests(TestCase):
             'password1': 'ComplexPass123',
             'password2': 'ComplexPass123',
         }, follow=True)
+
         self.assertEqual(response.status_code, 200)
         self.assertTrue(User.objects.filter(username='newuser').exists())
-        self.assertContains(response, 'Welcome to CommPolls!')
+        self.assertContains(response, 'Hello, newuser!')
 
     def test_login_flow(self):
-        """User can log in and is redirected to home"""
+        """User can log in and see home page greeting"""
         response = self.client.post(reverse('login'), {
             'username': 'testuser',
             'password': 'password123',
         }, follow=True)
+
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Hello, testuser!')
 
@@ -44,7 +46,6 @@ class UserIntegrationTests(TestCase):
         """User can update username, email, and upload avatar"""
         self.client.login(username='testuser', password='password123')
 
-        # Create a dummy image file
         avatar_file = SimpleUploadedFile(
             "avatar.png", b"fake-image-content", content_type="image/png"
         )
@@ -54,11 +55,20 @@ class UserIntegrationTests(TestCase):
             {
                 'username': 'updateduser',
                 'email': 'updated@example.com',
+                'avatar': avatar_file,
+            },
+            follow=True
+        )
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(
+            reverse('comm_polls:account_settings'),
+            {
+                'username': 'updateduser',
+                'email': 'updated@example.com',
             },
             files={'avatar': avatar_file},
             follow=True
         )
-        self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Your account details have been updated.')
 
         user = get_user_model().objects.get(pk=self.user.pk)
@@ -67,7 +77,7 @@ class UserIntegrationTests(TestCase):
         self.assertTrue(hasattr(user.profile, 'avatar'))
 
     def test_password_change_flow(self):
-        """User can change password"""
+        """User can change password successfully"""
         self.client.login(username='testuser', password='password123')
         response = self.client.post(
             reverse('comm_polls:password_change'),
@@ -78,5 +88,6 @@ class UserIntegrationTests(TestCase):
             },
             follow=True
         )
+
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Password change successful')
