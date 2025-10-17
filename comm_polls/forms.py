@@ -9,14 +9,16 @@ class SignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ("username", "email", "password1", "password2", "avatar")
+        fields = ("username", "email", "password1", "password2")  # avatar handled separately
 
     def save(self, commit=True):
-        user = super().save(commit)
+        # Save user instance but don't commit yet
+        user = super().save(commit=False)
         if commit:
-            avatar = self.cleaned_data.get('avatar')
+            user.save()  # save the user first
             # Ensure profile exists
             profile, created = Profile.objects.get_or_create(user=user)
+            avatar = self.cleaned_data.get('avatar')
             if avatar:
                 profile.avatar = avatar
                 profile.save()
@@ -28,15 +30,16 @@ class UserUpdateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'avatar']
+        fields = ['username', 'email']  # avatar handled separately
 
     def save(self, commit=True):
-        user = super().save(commit)
+        user = super().save(commit=False)
         if commit:
-            avatar = self.cleaned_data.get('avatar')
+            user.save()  # save user first
             # Ensure profile exists
             profile, created = Profile.objects.get_or_create(user=user)
-            if avatar:
+            avatar = self.cleaned_data.get('avatar')
+            if avatar is not None:
                 profile.avatar = avatar
                 profile.save()
         return user
