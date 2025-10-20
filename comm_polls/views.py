@@ -1,3 +1,5 @@
+from django.http import JsonResponse
+from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -53,9 +55,34 @@ def create_poll(request):
 
 @login_required
 def manage_poll(request, poll_id):
-    """Manage a specific poll (placeholder)."""
-    poll = get_object_or_404(Poll, id=poll_id)
+    poll = get_object_or_404(Poll, id=poll_id, created_by=request.user)
+
+    if request.method == 'POST':
+        if 'update_end_date' in request.POST:
+            new_end_date = request.POST.get('end_date')
+            if new_end_date:
+                poll.end_date = new_end_date
+                poll.save()
+                messages.success(request, 'Poll end date updated successfully.')
+                return redirect('comm_polls:manage_poll', poll_id=poll.id)
+
+        elif 'close_poll' in request.POST:
+            poll.end_date = timezone.now()
+            poll.save()
+            messages.success(request, 'Poll has been closed.')
+            return redirect('comm_polls:manage_poll', poll_id=poll.id)
+
     return render(request, "comm_polls/manage_poll.html", {"poll": poll})
+
+
+@login_required
+def delete_poll(request, poll_id):
+    poll = get_object_or_404(Poll, id=poll_id, created_by=request.user)
+    if request.method == 'POST':
+        poll.delete()
+        messages.success(request, 'Poll deleted successfully.')
+        return redirect('comm_polls:polls')
+    return render(request, 'comm_polls/delete_poll.html', {'poll': poll})
 
 
 @login_required
@@ -106,6 +133,13 @@ def poll_countdown(request, poll_id):
     if poll.has_started:
         return redirect('comm_polls:vote', poll_id=poll.id)
     return render(request, "comm_polls/poll_countdown.html", {"poll": poll})
+
+
+def poll_results_api(request, poll_id):
+    poll = get_object_or_404(Poll, id=poll_id)
+    choices = poll.choices.all()
+    results = {choice.id: choice.votes_count for choice in choices}
+    return JsonResponse(results)
 
 
 def signup(request):

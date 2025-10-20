@@ -3,16 +3,45 @@
 <head>
     <title>Poll Results</title>
 </head>
-<body>
+<body data-poll-id="{{ poll.id }}">
     <h1>{{ poll.name }}</h1>
     <p>{{ poll.description }}</p>
 
-    <ul>
+    <ul id="poll-results">
     {% for choice in poll.choices.all %}
-        <li>{{ choice.name }} -- {{ choice.votes_count }} vote{{ choice.votes_count|pluralize }}</li>
+        <li data-choice-id="{{ choice.id }}">{{ choice.name }} -- <span class="votes-count">{{ choice.votes_count }}</span> vote<span class="pluralize">{{ choice.votes_count|pluralize }}</span></li>
     {% endfor %}
     </ul>
 
     <a href="{% url 'comm_polls:home' %}">Back to Polls</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const pollId = document.body.dataset.pollId;
+            const resultsUrl = `/api/polls/${pollId}/results/`;
+
+            const updateResults = async () => {
+                try {
+                    const response = await fetch(resultsUrl);
+                    if (!response.ok) return;
+                    const data = await response.json();
+
+                    for (const [choiceId, votes] of Object.entries(data)) {
+                        const choiceElement = document.querySelector(`li[data-choice-id='${choiceId}']`);
+                        if (choiceElement) {
+                            const votesCountElement = choiceElement.querySelector('.votes-count');
+                            const pluralizeElement = choiceElement.querySelector('.pluralize');
+                            votesCountElement.textContent = votes;
+                            pluralizeElement.textContent = votes !== 1 ? 's' : '';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching poll results:', error);
+                }
+            };
+
+            setInterval(updateResults, 5000); // Update every 5 seconds
+        });
+    </script>
 </body>
 </html>

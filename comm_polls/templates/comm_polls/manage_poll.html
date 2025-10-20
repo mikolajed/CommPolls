@@ -13,6 +13,35 @@
         <a href="{% url 'logout' %}">Logout</a>
     </p>
 
-    <p>Coming soon — edit or delete poll options.</p>
+    <h2>Poll Results</h2>
+    <ul>
+    {% for choice in poll.choices.all %}
+        <li>{{ choice.name }} -- {{ choice.votes_count }} vote{{ choice.votes_count|pluralize }}</li>
+    {% endfor %}
+    </ul>
+
+    <hr>
+
+    <h2>Manage Poll</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <h3>Update End Date</h3>
+        <input type="datetime-local" name="end_date" value="{{ poll.end_date|date:'Y-m-d\TH:i' }}">
+        <button type="submit" name="update_end_date">Update</button>
+    </form>
+
+    <form method="post" style="margin-top: 1rem;">
+        {% csrf_token %}
+        <h3>Close Poll</h3>
+        <p>This will close the poll to new votes immediately.</p>
+        <button type="submit" name="close_poll">Close Poll Now</button>
+    </form>
+
+    <hr>
+
+    <h2>Delete Poll</h2>
+    <p>This action cannot be undone.</p>
+    <a href="{% url 'comm_polls:delete_poll' poll.id %}">Delete this Poll</a>
 </body>
 </html>

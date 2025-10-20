@@ -12,9 +12,11 @@ urlpatterns = [
     path('votes/', views.my_votes, name='votes'),
     path('polls/create/', views.create_poll, name='create_poll'),
     path('polls/<int:poll_id>/manage/', views.manage_poll, name='manage_poll'),
+    path('polls/<int:poll_id>/delete/', views.delete_poll, name='delete_poll'),
     path('polls/<int:poll_id>/vote/', views.vote, name='vote'),
     path('polls/<int:poll_id>/results/', views.results, name='results'),
     path('polls/<int:poll_id>/countdown/', views.poll_countdown, name='poll_countdown'),
+    path('api/polls/<int:poll_id>/results/', views.poll_results_api, name='poll_results_api'),
     path(
         'password_change/',
         auth_views.PasswordChangeView.as_view(
