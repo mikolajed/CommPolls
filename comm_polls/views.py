@@ -16,17 +16,11 @@ def home(request):
 
     # Filtering logic
     creator_id = request.GET.get('creator')
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
     voted_status = request.GET.get('voted_status')
     poll_status = request.GET.get('poll_status')
 
     if creator_id:
         polls = polls.filter(created_by_id=creator_id)
-    if start_date:
-        polls = polls.filter(start_date__gte=start_date)
-    if end_date:
-        polls = polls.filter(end_date__lte=end_date)
 
     if poll_status:
         now = timezone.now()
