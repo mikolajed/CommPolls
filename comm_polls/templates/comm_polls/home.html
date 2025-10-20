@@ -29,18 +29,50 @@
 
         <hr>
 
+        <!-- Filter Form -->
+        <h2>Filter Polls</h2>
+        <form method="get">
+            <label for="creator">Creator:</label>
+            <select name="creator" id="creator">
+                <option value="">All</option>
+                {% for u in users %}
+                    <option value="{{ u.id }}" {% if selected_creator|stringformat:"s" == u.id|stringformat:"s" %}selected="selected"{% endif %}>{{ u.username }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" id="start_date" value="{{ filters.start_date }}">
+
+            <label for="end_date">End Date:</label>
+            <input type="date" name="end_date" id="end_date" value="{{ filters.end_date }}">
+
+            <label for="voted_status">My Votes:</label>
+            <select name="voted_status" id="voted_status">
+                <option value="">All</option>
+                <option value="voted" {% if filters.voted_status == 'voted' %}selected{% endif %}>Voted</option>
+                <option value="not_voted" {% if filters.voted_status == 'not_voted' %}selected{% endif %}>Not Voted</option>
+            </select>
+
+            <button type="submit">Filter</button>
+            <a href="{% url 'comm_polls:home' %}">Clear</a>
+        </form>
+
+        <hr>
+
         <!-- Poll List -->
         <h2>All Polls</h2>
         {% if polls %}
             <ul>
                 {% for poll in polls %}
                     <li>
-                        <a href="{% url 'comm_polls:vote' poll.id %}">{{ poll.name }}</a>
+                        <strong><a href="{% url 'comm_polls:vote' poll.id %}">{{ poll.name }}</a></strong>
+                        <p>Created by: {{ poll.created_by.username }}</p>
+                        <p>Starts: {{ poll.start_date }} | Ends: {{ poll.end_date }}</p>
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
-            <p>No polls available.</p>
+            <p>No polls match your filter criteria.</p>
         {% endif %}
 
     {% else %}

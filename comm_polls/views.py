@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
@@ -9,9 +10,37 @@ from .forms import SignUpForm, UserUpdateForm, PollForm, ChoiceFormSet
 from .models import Poll, Choice, Vote
 
 def home(request):
-    """Home page showing all polls."""
+    """Home page showing all polls with filtering."""
     polls = Poll.objects.all()
-    return render(request, "comm_polls/home.html", {"polls": polls})
+    users = User.objects.all()
+
+    # Filtering logic
+    creator_id = request.GET.get('creator')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    voted_status = request.GET.get('voted_status')
+
+    if creator_id:
+        polls = polls.filter(created_by_id=creator_id)
+    if start_date:
+        polls = polls.filter(start_date__gte=start_date)
+    if end_date:
+        polls = polls.filter(end_date__lte=end_date)
+
+    if request.user.is_authenticated and voted_status:
+        voted_poll_ids = request.user.user_votes.values_list('poll_id', flat=True)
+        if voted_status == 'voted':
+            polls = polls.filter(id__in=voted_poll_ids)
+        elif voted_status == 'not_voted':
+            polls = polls.exclude(id__in=voted_poll_ids)
+
+    context = {
+        'polls': polls,
+        'users': users,
+        'filters': request.GET,
+        'selected_creator': int(creator_id) if creator_id else None
+    }
+    return render(request, "comm_polls/home.html", context)
 
 
 @login_required
