@@ -1,43 +1,43 @@
-# CommPolls 🗳️
+# 🗳️ CommPolls
 
-A simple Django-based community polling application.
+A simple **Django-based community polling application** that allows users to create, vote, and manage polls.
 
-## Features
+---
 
-* **User Authentication**: Secure sign-up, login, logout, and password management.
-* **Account Management**: Users can view and update their account details.
-* **Poll Creation**: Authenticated users can create polls with custom choices.
-* **Poll Management**: Users can manage their created polls, including updating the end date, closing the poll, or deleting it.
-* **Voting System**: Users can vote on active polls, with safeguards to prevent duplicate voting.
-* **Real-Time Results**: Poll results update automatically in real-time using AJAX, without needing a page refresh.
-* **Poll Lifecycle**: Polls have a clear lifecycle, with a countdown for upcoming polls, an active voting period, and a final results view.
-* **User Dashboards**: Dedicated pages for users to view all the polls they have created ("My Polls") and all the polls they have voted on ("My Votes").
-* **Advanced Poll Filtering**: Filter polls on the homepage by creator, start/end date, and voting status.
+## 🚀 Features
 
-## Future Enhancements
+- 🔐 **User Authentication** – Sign-up, login, logout, and password management.  
+- 👤 **Account Management** – Update username, email, and avatar.  
+- 📊 **Poll Creation** – Authenticated users can create polls with multiple choices.  
+- 🗑️ **Poll Management** – Edit, close, or delete polls.  
+- ✅ **Voting System** – One vote per user per poll.  
+- ⚡ **Real-Time Results** – Live poll updates via AJAX.  
+- 🕒 **Poll Lifecycle** – Upcoming, active, and completed polls.  
+- 🧍 **User Dashboards** – View "My Polls" and "My Votes."  
+- 🔍 **Advanced Filtering** – Filter polls by creator, date, and status.  
 
-* **Role-Based Access**: Introduce roles like Regular, Manager, and Backend Admin to manage permissions.
-* **Poll Topics**: Organize polls by topics and allow users to filter them.
-* **Responsive UI**: Implement a responsive, modern UI using a framework like Bootstrap.
-* **Containerization**: Add Docker support for easier deployment and a consistent development environment.
-* **Automated Testing**: Expand the test suite to cover all application features.
+---
 
-## Getting Started (Development)
+## 🧭 Future Enhancements
 
-### 1. Clone this repo
+- Role-based permissions (Regular, Manager, Admin)  
+- Poll topics and tags  
+- Responsive UI (Bootstrap / Tailwind)  
+- Full test coverage & CI/CD improvements  
 
+---
+
+## 🧑‍💻 Getting Started (Development)
+
+### 1. Clone the repository
 ```bash
 git clone https://github.com/mikolajed/CommPolls.git
 cd CommPolls
 ```
 
-## ⚠️ Python Version
-
-This project currently does **not work with Python 3.14** due to Django compatibility issues.
-
-Please use **Python 3.12** (recommended) or **Python 3.11** when setting up your environment.
-
-You can install it with [pyenv](https://github.com/pyenv/pyenv):
+### 2. Set up Python environment
+> ⚠️ Django 4.2 is **not compatible with Python 3.14**.  
+Use **Python 3.12** (recommended) or **Python 3.11**.
 
 ```bash
 pyenv install 3.12.6
@@ -47,28 +47,25 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Running Tests 🧢
+---
 
-We use Django’s test framework with coverage to ensure all parts of the application work correctly. You can run tests locally and generate reports similar to the GitHub workflow.
+## 🧪 Running Tests
 
-### 1. Install testing dependencies
+We use Django’s built-in test runner and `coverage` for detailed reporting.
 
+### 1. Install test dependencies
 ```bash
 pip install coverage pytest pytest-django
 ```
 
 ### 2. Run all tests with coverage
-
 ```bash
 coverage run --source=comm_polls manage.py test
-coverage report -m           # shows coverage in the terminal
-coverage html                # generates an HTML report at htmlcov/index.html
+coverage report -m
+coverage html
 ```
 
 ### 3. Run specific test types
-
-You can run only certain types of tests by pointing to the test file:
-
 ```bash
 # Unit tests
 python manage.py test comm_polls.tests
@@ -76,21 +73,91 @@ python manage.py test comm_polls.tests
 # Integration tests
 python manage.py test comm_polls.integration_tests
 
-# End-to-end tests
+# End-to-End (E2E) tests
 python manage.py test comm_polls.e2e_tests
 ```
 
 ### 4. View HTML coverage report
-
-Open the generated report in your browser:
-
 ```bash
-open htmlcov/index.html   # macOS
-xdg-open htmlcov/index.html # Linux
+open htmlcov/index.html      # macOS
+xdg-open htmlcov/index.html  # Linux
 ```
 
-> Tip: You can combine pytest with coverage for faster test discovery and nicer output:
+---
+
+## 🐳 Deploying with Docker
+
+You can run CommPolls entirely in Docker — no local setup needed.
+
+### 1. Build and start the app
+```bash
+docker compose up --build
+```
+
+This will:
+- Build the Django app container  
+- Run the dev server on [http://localhost:8000](http://localhost:8000)
+
+### 2. Run migrations (if needed)
+```bash
+docker compose exec web python manage.py migrate
+```
+
+### 3. Create a superuser (admin)
+```bash
+docker compose exec web python manage.py createsuperuser
+```
+
+Then log in at:
+```
+http://localhost:8000/admin/
+```
+
+### 4. Run tests in Docker
+```bash
+docker compose exec web coverage run --source=comm_polls manage.py test
+docker compose exec web coverage report -m
+```
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env` file in your project root:
+
+```
+DEBUG=True
+SECRET_KEY=your-secret-key
+ALLOWED_HOSTS=localhost,127.0.0.1
+DATABASE_URL=sqlite:///db.sqlite3
+```
+
+---
+
+## 💡 Quick Start Summary
 
 ```bash
-pytest --cov=comm_polls --cov-report=term --cov-report=html
+# Setup
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+
+# Run locally
+python manage.py runserver
+
+# Create superuser
+python manage.py createsuperuser
 ```
+
+Then open:  
+👉 **http://127.0.0.1:8000/**
+
+---
+
+## 🧠 License
+
+This project is licensed under the **MIT License** — free to use and modify.
+
+---
+
+**CommPolls** — Simple, scalable, and community-driven polls for everyone 🗳️
