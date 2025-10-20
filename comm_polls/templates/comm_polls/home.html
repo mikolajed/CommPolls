@@ -53,6 +53,14 @@
                 <option value="not_voted" {% if filters.voted_status == 'not_voted' %}selected{% endif %}>Not Voted</option>
             </select>
 
+            <label for="poll_status">Status:</label>
+            <select name="poll_status" id="poll_status">
+                <option value="">All</option>
+                <option value="ongoing" {% if filters.poll_status == 'ongoing' %}selected{% endif %}>Ongoing</option>
+                <option value="ended" {% if filters.poll_status == 'ended' %}selected{% endif %}>Ended</option>
+                <option value="not_started" {% if filters.poll_status == 'not_started' %}selected{% endif %}>Not Started</option>
+            </select>
+
             <button type="submit">Filter</button>
             <a href="{% url 'comm_polls:home' %}">Clear</a>
         </form>
@@ -66,12 +74,27 @@
                 {% for poll in polls %}
                     <li>
                         <div {% if poll.is_suspended %}style="opacity: 0.6;"{% endif %}>
-                            <strong><a href="{% url 'comm_polls:vote' poll.id %}">{{ poll.name }}</a></strong> 
+                            <strong>
+                                {% if poll.has_ended %}
+                                    <a href="{% url 'comm_polls:results' poll.id %}">{{ poll.name }}</a>
+                                {% else %}
+                                    <a href="{% url 'comm_polls:vote' poll.id %}">{{ poll.name }}</a>
+                                {% endif %}
+                            </strong> 
                             {% if poll.is_suspended %}
                                 <span style="color:red;">(Suspended)</span>
                             {% endif %}
                             <p>Created by: {{ poll.created_by.username }}</p>
                             <p>Starts: {{ poll.start_date }} | Ends: {{ poll.end_date }}</p>
+
+                            {% if poll.has_ended %}
+                                <p><strong>Results:</strong></p>
+                                <ul style="font-size: 0.9em; margin-top: 5px;">
+                                    {% for choice in poll.choices.all %}
+                                        <li>{{ choice.name }}: {{ choice.votes_count }} vote{{ choice.votes_count|pluralize }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
                         </div>
 
                         {% if user.is_authenticated and perms.comm_polls.can_suspend_poll %}

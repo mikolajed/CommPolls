@@ -19,6 +19,7 @@ def home(request):
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
     voted_status = request.GET.get('voted_status')
+    poll_status = request.GET.get('poll_status')
 
     if creator_id:
         polls = polls.filter(created_by_id=creator_id)
@@ -26,6 +27,15 @@ def home(request):
         polls = polls.filter(start_date__gte=start_date)
     if end_date:
         polls = polls.filter(end_date__lte=end_date)
+
+    if poll_status:
+        now = timezone.now()
+        if poll_status == 'ongoing':
+            polls = polls.filter(start_date__lte=now, end_date__gt=now)
+        elif poll_status == 'ended':
+            polls = polls.filter(end_date__lte=now)
+        elif poll_status == 'not_started':
+            polls = polls.filter(start_date__gt=now)
 
     if request.user.is_authenticated and voted_status:
         voted_poll_ids = request.user.user_votes.values_list('poll_id', flat=True)
