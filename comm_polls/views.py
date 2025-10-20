@@ -21,8 +21,9 @@ def polls_list(request):
 
 @login_required
 def my_votes(request):
-    """Show polls the user has voted on (placeholder)."""
-    return render(request, "comm_polls/my_votes.html")
+    """Show polls the user has voted on."""
+    user_votes = Vote.objects.filter(voter=request.user).select_related('poll', 'choice')
+    return render(request, "comm_polls/my_votes.html", {"user_votes": user_votes})
 
 
 @login_required

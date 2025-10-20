@@ -13,6 +13,18 @@
         <a href="{% url 'logout' %}">Logout</a>
     </p>
 
-    <p>Coming soon — list of polls you’ve voted on.</p>
+    {% if user_votes %}
+        <ul>
+            {% for vote in user_votes %}
+                <li>
+                    <strong>{{ vote.poll.name }}</strong>
+                    <p>Your choice: {{ vote.choice.name }}</p>
+                    <a href="{% url 'comm_polls:results' vote.poll.id %}">View Results</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You haven't voted on any polls yet.</p>
+    {% endif %}
 </body>
 </html>
