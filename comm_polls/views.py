@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db import transaction
 from .forms import SignUpForm, UserUpdateForm, PollForm, ChoiceFormSet
@@ -33,6 +33,10 @@ def home(request):
             polls = polls.filter(id__in=voted_poll_ids)
         elif voted_status == 'not_voted':
             polls = polls.exclude(id__in=voted_poll_ids)
+
+    # If the user is not a manager, hide suspended polls
+    if not request.user.has_perm('comm_polls.can_suspend_poll'):
+        polls = polls.filter(is_suspended=False)
 
     context = {
         'polls': polls,
@@ -112,6 +116,16 @@ def delete_poll(request, poll_id):
         messages.success(request, 'Poll deleted successfully.')
         return redirect('comm_polls:polls')
     return render(request, 'comm_polls/delete_poll.html', {'poll': poll})
+
+
+@login_required
+@permission_required('comm_polls.can_suspend_poll', raise_exception=True)
+def suspend_poll(request, poll_id):
+    poll = get_object_or_404(Poll, pk=poll_id)
+    # Toggle the suspended state
+    poll.is_suspended = not poll.is_suspended
+    poll.save()
+    return redirect('comm_polls:home')
 
 
 @login_required

@@ -65,9 +65,23 @@
             <ul>
                 {% for poll in polls %}
                     <li>
-                        <strong><a href="{% url 'comm_polls:vote' poll.id %}">{{ poll.name }}</a></strong>
-                        <p>Created by: {{ poll.created_by.username }}</p>
-                        <p>Starts: {{ poll.start_date }} | Ends: {{ poll.end_date }}</p>
+                        <div {% if poll.is_suspended %}style="opacity: 0.6;"{% endif %}>
+                            <strong><a href="{% url 'comm_polls:vote' poll.id %}">{{ poll.name }}</a></strong> 
+                            {% if poll.is_suspended %}
+                                <span style="color:red;">(Suspended)</span>
+                            {% endif %}
+                            <p>Created by: {{ poll.created_by.username }}</p>
+                            <p>Starts: {{ poll.start_date }} | Ends: {{ poll.end_date }}</p>
+                        </div>
+
+                        {% if user.is_authenticated and perms.comm_polls.can_suspend_poll %}
+                            <form action="{% url 'comm_polls:suspend_poll' poll.id %}" method="post" style="display:inline; margin-left: 10px;">
+                                {% csrf_token %}
+                                <button type="submit">
+                                    {% if poll.is_suspended %}Unsuspend{% else %}Suspend{% endif %}
+                                </button>
+                            </form>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>

@@ -2,14 +2,25 @@
 
 A simple Django-based community polling application.
 
-## Features (planned)
+## Features
 
-* User login & password reset
-* Role-based access (Regular, Manager, Backend Admin)
-* Polls and Topics with filtering
-* Responsive, Bootstrap-styled UI
-* AJAX voting
-* Docker deployment & tests (to be added)
+* **User Authentication**: Secure sign-up, login, logout, and password management.
+* **Account Management**: Users can view and update their account details.
+* **Poll Creation**: Authenticated users can create polls with custom choices.
+* **Poll Management**: Users can manage their created polls, including updating the end date, closing the poll, or deleting it.
+* **Voting System**: Users can vote on active polls, with safeguards to prevent duplicate voting.
+* **Real-Time Results**: Poll results update automatically in real-time using AJAX, without needing a page refresh.
+* **Poll Lifecycle**: Polls have a clear lifecycle, with a countdown for upcoming polls, an active voting period, and a final results view.
+* **User Dashboards**: Dedicated pages for users to view all the polls they have created ("My Polls") and all the polls they have voted on ("My Votes").
+* **Advanced Poll Filtering**: Filter polls on the homepage by creator, start/end date, and voting status.
+
+## Future Enhancements
+
+* **Role-Based Access**: Introduce roles like Regular, Manager, and Backend Admin to manage permissions.
+* **Poll Topics**: Organize polls by topics and allow users to filter them.
+* **Responsive UI**: Implement a responsive, modern UI using a framework like Bootstrap.
+* **Containerization**: Add Docker support for easier deployment and a consistent development environment.
+* **Automated Testing**: Expand the test suite to cover all application features.
 
 ## Getting Started (Development)
 

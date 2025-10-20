@@ -11,6 +11,12 @@ class Poll(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
+    is_suspended = models.BooleanField(default=False)
+
+    class Meta:
+        permissions = [
+            ("can_suspend_poll", "Can suspend poll"),
+        ]
 
     def __str__(self):
         return self.name
