@@ -13,6 +13,7 @@ urlpatterns = [
     path('polls/create/', views.create_poll, name='create_poll'),
     path('polls/<int:poll_id>/manage/', views.manage_poll, name='manage_poll'),
     path('polls/<int:poll_id>/vote/', views.vote, name='vote'),
+    path('polls/<int:poll_id>/results/', views.results, name='results'),
     path(
         'password_change/',
         auth_views.PasswordChangeView.as_view(

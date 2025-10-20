@@ -36,20 +36,16 @@ class Choice(models.Model):
     poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name="choices")
     name = models.CharField(max_length=200)
     details = models.TextField(blank=True)
+    votes_count = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.name}"
 
-    @property
-    def vote_count(self):
-        """Returns the number of votes for this choice"""
-        return self.vote_set.count()
-
 
 class Vote(models.Model):
-    poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name="votes")
-    choice = models.ForeignKey(Choice, on_delete=models.CASCADE, related_name="votes")
-    voter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="votes")
+    poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name="poll_votes")
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE, related_name="choice_votes")
+    voter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_votes")
     voted_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

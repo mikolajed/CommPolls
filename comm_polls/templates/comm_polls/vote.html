@@ -13,6 +13,19 @@
         <a href="{% url 'logout' %}">Logout</a>
     </p>
 
-    <p>Voting options will appear here soon.</p>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+    <form action="{% url 'comm_polls:vote' poll.id %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><h2>{{ poll.name }}</h2></legend>
+            <p>{{ poll.description }}</p>
+            {% for choice in poll.choices.all %}
+                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                <label for="choice{{ forloop.counter }}">{{ choice.name }}</label><br>
+            {% endfor %}
+        </fieldset>
+        <button type="submit">Vote</button>
+    </form>
 </body>
 </html>

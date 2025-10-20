@@ -12,7 +12,7 @@ class PollAdmin(admin.ModelAdmin):
 
 @admin.register(Choice)
 class ChoiceAdmin(admin.ModelAdmin):
-    list_display = ("name", "poll", "vote_count")
+    list_display = ("name", "poll", "votes_count")
 
 @admin.register(Vote)
 class VoteAdmin(admin.ModelAdmin):

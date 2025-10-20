@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db import transaction
 from .forms import SignUpForm, UserUpdateForm, PollForm, ChoiceFormSet
-from .models import Poll
+from .models import Poll, Choice, Vote
 
 def home(request):
     """Home page showing all polls."""
@@ -58,9 +59,41 @@ def manage_poll(request, poll_id):
 
 @login_required
 def vote(request, poll_id):
-    """Vote on a poll (placeholder)."""
     poll = get_object_or_404(Poll, id=poll_id)
+
+    if not poll.is_active:
+        messages.error(request, 'This poll is not active for voting.')
+        return redirect('comm_polls:home')
+
+    if poll.poll_votes.filter(voter=request.user).exists():
+        messages.warning(request, 'You have already voted on this poll.')
+        return redirect('comm_polls:results', poll_id=poll.id)
+
+    if request.method == 'POST':
+        try:
+            selected_choice_id = request.POST['choice']
+            selected_choice = poll.choices.get(id=selected_choice_id)
+        except (KeyError, Choice.DoesNotExist):
+            return render(request, 'comm_polls/vote.html', {
+                'poll': poll,
+                'error_message': "You didn't select a choice.",
+            })
+        else:
+            with transaction.atomic():
+                Vote.objects.create(poll=poll, choice=selected_choice, voter=request.user)
+                selected_choice.votes_count += 1
+                selected_choice.save()
+
+            messages.success(request, 'Your vote has been recorded!')
+            return redirect('comm_polls:results', poll_id=poll.id)
+    
     return render(request, "comm_polls/vote.html", {"poll": poll})
+
+
+@login_required
+def results(request, poll_id):
+    poll = get_object_or_404(Poll, id=poll_id)
+    return render(request, "comm_polls/results.html", {"poll": poll})
 
 
 def signup(request):

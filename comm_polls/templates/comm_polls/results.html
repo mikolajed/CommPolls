@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Poll Results</title>
+</head>
+<body>
+    <h1>{{ poll.name }}</h1>
+    <p>{{ poll.description }}</p>
+
+    <ul>
+    {% for choice in poll.choices.all %}
+        <li>{{ choice.name }} -- {{ choice.votes_count }} vote{{ choice.votes_count|pluralize }}</li>
+    {% endfor %}
+    </ul>
+
+    <a href="{% url 'comm_polls:home' %}">Back to Polls</a>
+</body>
+</html>
