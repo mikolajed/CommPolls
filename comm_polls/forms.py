@@ -56,7 +56,45 @@ class PollForm(forms.ModelForm):
             'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
+class ChoiceForm(forms.ModelForm):
+    name = forms.CharField(
+        label='Choice Name',
+        widget=forms.TextInput(attrs={'placeholder': 'Enter choice name'}),
+        required=True
+    )
+    details = forms.CharField(
+        label='Details',
+        widget=forms.Textarea(attrs={'rows': 2, 'placeholder': 'Optional details'}),
+        required=False
+    )
+
+    class Meta:
+        model = Choice
+        fields = ['name', 'details']
+
+class BaseChoiceFormSet(forms.BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+
+        filled_forms = 0
+        for form in self.forms:
+            if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                if form.cleaned_data.get('name'):
+                    filled_forms += 1
+        
+        if filled_forms < 2:
+            raise forms.ValidationError('You must provide at least two choices with a name.')
+
 # Inline formset for choices related to a poll
 ChoiceFormSet = inlineformset_factory(
-    Poll, Choice, fields=('name', 'details'), extra=2, can_delete=True
+    Poll, 
+    Choice, 
+    form=ChoiceForm, 
+    formset=BaseChoiceFormSet, 
+    extra=0, 
+    min_num=2, 
+    validate_min=True, 
+    can_delete=False
 )
