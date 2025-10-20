@@ -61,9 +61,12 @@ def manage_poll(request, poll_id):
 def vote(request, poll_id):
     poll = get_object_or_404(Poll, id=poll_id)
 
-    if not poll.is_active:
-        messages.error(request, 'This poll is not active for voting.')
-        return redirect('comm_polls:home')
+    if not poll.has_started:
+        return redirect('comm_polls:poll_countdown', poll_id=poll.id)
+
+    if poll.has_ended:
+        messages.warning(request, 'This poll has already ended.')
+        return redirect('comm_polls:results', poll_id=poll.id)
 
     if poll.poll_votes.filter(voter=request.user).exists():
         messages.warning(request, 'You have already voted on this poll.')
@@ -94,6 +97,14 @@ def vote(request, poll_id):
 def results(request, poll_id):
     poll = get_object_or_404(Poll, id=poll_id)
     return render(request, "comm_polls/results.html", {"poll": poll})
+
+
+@login_required
+def poll_countdown(request, poll_id):
+    poll = get_object_or_404(Poll, id=poll_id)
+    if poll.has_started:
+        return redirect('comm_polls:vote', poll_id=poll.id)
+    return render(request, "comm_polls/poll_countdown.html", {"poll": poll})
 
 
 def signup(request):

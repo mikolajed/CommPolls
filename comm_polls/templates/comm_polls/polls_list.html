@@ -19,7 +19,13 @@
                 <li>
                     <strong>{{ poll.name }}</strong> –
                     <a href="{% url 'comm_polls:manage_poll' poll.id %}">Manage</a> |
-                    <a href="{% url 'comm_polls:vote' poll.id %}">Vote</a>
+                    {% if not poll.has_started %}
+                        <a href="{% url 'comm_polls:poll_countdown' poll.id %}">View Countdown</a>
+                    {% elif poll.has_ended %}
+                        <a href="{% url 'comm_polls:results' poll.id %}">View Results</a>
+                    {% else %}
+                        <a href="{% url 'comm_polls:vote' poll.id %}">Vote</a>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
