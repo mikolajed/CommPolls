@@ -101,15 +101,7 @@ def manage_poll(request, poll_id):
     poll = get_object_or_404(Poll, id=poll_id, created_by=request.user)
 
     if request.method == 'POST':
-        if 'update_end_date' in request.POST:
-            new_end_date = request.POST.get('end_date')
-            if new_end_date:
-                poll.end_date = new_end_date
-                poll.save()
-                messages.success(request, 'Poll end date updated successfully.')
-                return redirect('comm_polls:manage_poll', poll_id=poll.id)
-
-        elif 'close_poll' in request.POST:
+        if 'close_poll' in request.POST:
             poll.end_date = timezone.now()
             poll.save()
             messages.success(request, 'Poll has been closed.')

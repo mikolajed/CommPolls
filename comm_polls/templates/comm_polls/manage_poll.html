@@ -24,13 +24,6 @@
 
     <h2>Manage Poll</h2>
 
-    <form method="post">
-        {% csrf_token %}
-        <h3>Update End Date</h3>
-        <input type="datetime-local" name="end_date" value="{{ poll.end_date|date:'Y-m-d\TH:i' }}">
-        <button type="submit" name="update_end_date">Update</button>
-    </form>
-
     <form method="post" style="margin-top: 1rem;">
         {% csrf_token %}
         <h3>Close Poll</h3>
