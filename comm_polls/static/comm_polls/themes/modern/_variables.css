@@ -1,0 +1,28 @@
+:root {
+    --primary-start: #6a11cb;
+    --primary-end: #2575fc;
+    --secondary-start: #fd7e14;
+    --secondary-end: #ffb703;
+    --danger: #d90429;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #212529;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+    --font-family: 'Poppins', sans-serif;
+    --shadow-color: rgba(0, 0, 0, 0.07);
+    --focus-shadow-color: rgba(37, 117, 252, 0.25);
+    --form-bg: #fff;
+    --choice-hover-bg: #f0f6ff;
+}
+
+[data-theme="dark"] {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #e9ecef;
+    --text-muted: #adb5bd;
+    --border-color: #343a40;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --form-bg: #2b2b2b;
+    --choice-hover-bg: #343a40;
+}
