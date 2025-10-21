@@ -406,3 +406,71 @@ button.danger:hover {
     height: 40vh;
     width: 100%;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        margin: 0;
+        padding: 15px;
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    h1 { font-size: 1.8em; }
+    h2 { font-size: 1.5em; }
+
+    .nav-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .nav-bar a {
+        margin-right: 5px;
+    }
+
+    /* Make filter form stack vertically */
+    form label {
+        margin-right: 0;
+    }
+    form select, form button, form .button-link {
+        display: block;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+
+    /* Adjust poll list for mobile */
+    .poll-list-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .poll-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .poll-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .poll-actions .button-link {
+        text-align: center;
+    }
+
+    .poll-list .suspend-form, .poll-list .suspend-form button {
+        width: 100%;
+    }
+
+    /* Stack create poll choice form */
+    .choice-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
