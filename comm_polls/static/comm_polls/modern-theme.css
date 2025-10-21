@@ -232,13 +232,38 @@ button.danger, .button-link.danger {
     padding: 0;
 }
 
+.poll-list-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
 .poll-list-item {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     padding: 15px;
     border-radius: 8px;
     transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
 }
+
+.poll-info {
+    flex-grow: 1;
+}
+
+.poll-actions {
+    flex-shrink: 0;
+}
+
+.suspend-form {
+    flex-shrink: 0;
+}
+
 .poll-list-item:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 15px var(--shadow-color);
