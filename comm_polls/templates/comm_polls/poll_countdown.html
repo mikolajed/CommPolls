@@ -3,9 +3,22 @@
 {% block title %}Poll Countdown{% endblock %}
 
 {% block content %}
-    <div class="countdown-container">
+    <div class="countdown-container" 
+         data-start-time="{{ poll.start_date.isoformat }}" 
+         data-vote-url="{% url 'comm_polls:vote' poll.id %}"
+         data-poll-id="{{ poll.id }}">
         <h1>{{ poll.name }}</h1>
-        <p>This poll has not started yet.</p>
-        <p class="countdown-timer">Voting begins on: {{ poll.start_date }}</p>
+        <p>Voting begins in:</p>
+        <div id="countdown-timer-dynamic" class="countdown-timer">
+            <div class="timer-box"><span id="days">00</span>Days</div>
+            <div class="timer-box"><span id="hours">00</span>Hours</div>
+            <div class="timer-box"><span id="minutes">00</span>Minutes</div>
+            <div class="timer-box" id="seconds-box"><span id="seconds">00</span>Seconds</div>
+        </div>
     </div>
+{% endblock %}
+
+{% block extra_head %}
+    {% load static %}
+    <script src="{% static 'comm_polls/scripts/countdown.js' %}" defer></script>
 {% endblock %}

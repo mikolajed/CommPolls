@@ -110,3 +110,46 @@
     }
     to { opacity: 1; transform: scale(1); }
 }
+
+/* Countdown Page */
+.countdown-container {
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.timer-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1em;
+    color: var(--text-muted);
+    min-width: 100px;
+}
+
+.timer-box span {
+    font-size: 4em;
+    font-weight: 600;
+    line-height: 1;
+    background: linear-gradient(45deg, var(--primary-start), var(--primary-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+#seconds-box {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
