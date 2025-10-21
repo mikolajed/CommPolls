@@ -72,11 +72,70 @@
     {% else %}
         <!-- Guest View -->
         <div class="guest-view">
-            <h1>Welcome to CommPolls!</h1>
-            <p>
-                <a href="{% url 'comm_polls:signup' %}">Sign up</a> or
-                <a href="{% url 'login' %}">Login</a>
-            </p>
+            <h1 class="guest-title">Welcome to CommPolls</h1>
+            <p class="guest-subtitle">Create, share, and vote on polls instantly.</p>
+            <div class="guest-actions">
+                <a href="{% url 'comm_polls:signup' %}" class="button-link">Sign Up</a>
+                <a href="{% url 'login' %}" class="button-link secondary">Log In</a>
+            </div>
         </div>
+
+        <hr>
+
+        <div class="showcase-container">
+            <div class="showcase-section">
+                <h2 class="showcase-title">Vote on Polls</h2>
+                <div class="showcase-poll-wrapper">
+                    <div class="showcase-poll">
+                        <div class="showcase-poll-header">
+                            <strong>What's the best feature?</strong>
+                            <p>Created by: TheCommunity</p>
+                        </div>
+                        <div class="showcase-choices">
+                            <div class="showcase-choice">Clean, modern UI</div>
+                            <div class="showcase-choice selected">Light & Dark Modes</div>
+                            <div class="showcase-choice">Real-time results</div>
+                        </div>
+                        <button class="button-link" disabled>Cast Your Vote</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="showcase-section">
+                <h2 class="showcase-title">See Instant Results</h2>
+                <div class="showcase-poll-wrapper">
+                    <div class="showcase-poll">
+                        <div class="showcase-poll-header">
+                            <strong>What's the best feature?</strong>
+                            <p>Total Votes: 1,337</p>
+                        </div>
+                        <div class="showcase-results">
+                            <div class="result-item">
+                                <span class="result-label">Clean, modern UI</span>
+                                <div class="result-bar"><div class="bar-fill" style="width: 35%;"></div></div>
+                                <span class="result-percent">35%</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Light & Dark Modes</span>
+                                <div class="result-bar"><div class="bar-fill" style="width: 50%;"></div></div>
+                                <span class="result-percent">50%</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Real-time results</span>
+                                <div class="result-bar"><div class="bar-fill" style="width: 15%;"></div></div>
+                                <span class="result-percent">15%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block extra_head %}
+    {% if not user.is_authenticated %}
+        {% load static %}
+        <script src="{% static 'comm_polls/showcase.js' %}" defer></script>
     {% endif %}
 {% endblock %}
