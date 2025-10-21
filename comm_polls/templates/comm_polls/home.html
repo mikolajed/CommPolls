@@ -136,6 +136,6 @@
 {% block extra_head %}
     {% if not user.is_authenticated %}
         {% load static %}
-        <script src="{% static 'comm_polls/showcase.js' %}" defer></script>
+        <script src="{% static 'comm_polls/scripts/showcase.js' %}" defer></script>
     {% endif %}
 {% endblock %}
