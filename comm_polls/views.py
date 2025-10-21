@@ -167,9 +167,19 @@ def vote(request, poll_id):
 def results(request, poll_id):
     poll = get_object_or_404(Poll, id=poll_id)
     choices = poll.choices.order_by('-votes_count')
+
+    # Get the user's vote for this poll, if it exists
+    user_vote = None
+    if request.user.is_authenticated:
+        try:
+            user_vote = Vote.objects.get(poll=poll, voter=request.user)
+        except Vote.DoesNotExist:
+            user_vote = None
+
     context = {
         "poll": poll,
         "choices": choices,
+        "user_vote": user_vote,
     }
     return render(request, "comm_polls/results.html", context)
 

@@ -2,42 +2,31 @@
 
 {% block title %}Results: {{ poll.name }}{% endblock %}
 
-{% block extra_head %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{% endblock %}
-
 {% block content %}
     <h1>Results for: {{ poll.name }}</h1>
     <p>Total votes: {{ poll.total_votes }}</p>
 
-    <div class="chart-container">
-        <canvas id="resultsChart"
-                data-labels='[{% for choice in choices %}"{{ choice.name|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]'
-                data-votes='[{% for choice in choices %}{{ choice.votes_count }}{% if not forloop.last %},{% endif %}{% endfor %}]'>
-        </canvas>
+    <hr>
+
+    <div class="showcase-results">
+        {% if poll.total_votes > 0 %}
+            {% for choice in choices %}
+                {% with percentage|floatformat:0 as percentage_int %}
+                    {% widthratio choice.votes_count poll.total_votes 100 as percentage %}                    
+                    <div class="result-item {% if user_vote and user_vote.choice.id == choice.id %}voted-for{% endif %}">
+                        <span class="result-label">{{ choice.name }}</span>
+                        <div class="result-bar">
+                            <div class="bar-fill" style="width: {{ percentage }}%;"></div>
+                        </div>
+                        <span class="result-percent">{{ percentage|floatformat:0 }}%</span>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        {% else %}
+            <p>No votes have been cast yet.</p>
+        {% endif %}
     </div>
 
     <hr>
-
-    <table class="results-table">
-        <thead>
-            <tr>
-                <th>Choice</th>
-                <th>Votes</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for choice in choices %}
-                <tr>
-                    <td>{{ choice.name }}</td>
-                    <td>{{ choice.votes_count }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <hr>
     <a href="{% url 'comm_polls:home' %}" class="button-link">Back to Home</a>
-
-    {% load static %}
-    <script src="{% static 'comm_polls/results.js' %}"></script>
 {% endblock %}
