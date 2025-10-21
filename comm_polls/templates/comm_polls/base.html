@@ -19,7 +19,11 @@
                     {% endif %}
                     <strong>Hello, {{ user.username }}!</strong>
                 </div>
-                <button id="theme-toggle" class="theme-switcher" title="Toggle theme">🌙</button>
+                <div class="header-actions">
+                    <button onclick="window.location.href='{% url 'comm_polls:account_settings' %}'" class="icon-button" title="Settings">⚙️</button>
+                    <button onclick="window.location.href='{% url 'logout' %}'" class="icon-button" title="Logout">🚪</button>
+                    <button id="theme-toggle" class="icon-button" title="Toggle theme">🌙</button>
+                </div>
             </div>
 
             <nav class="nav-bar">
@@ -27,8 +31,6 @@
                 <a href="{% url 'comm_polls:polls' %}">My Polls</a>
                 <a href="{% url 'comm_polls:votes' %}">My Votes</a>
                 <a href="{% url 'comm_polls:create_poll' %}">Create Poll</a>
-                <a href="{% url 'comm_polls:account_settings' %}">Settings</a>
-                <a href="{% url 'logout' %}">Logout</a>
             </nav>
         {% endif %}
 
