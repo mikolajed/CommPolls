@@ -103,6 +103,15 @@ button.danger, .button-link.danger {
     gap: 0.5rem;
 }
 
+/* My Votes Page Item */
+.my-votes-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
 /* Poll List */
 .poll-list {
     list-style: none;
