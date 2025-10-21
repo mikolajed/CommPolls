@@ -1,0 +1,93 @@
+/* General Body Styles */
+body {
+    font-family: var(--font-family);
+    line-height: 1.6;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+    max-width: 960px;
+    margin: 20px auto;
+    background: var(--card-bg);
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px var(--shadow-color);
+    transition: background-color 0.3s;
+}
+
+h1, h2, h3 {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: var(--border-color);
+    margin: 2rem 0;
+}
+
+a {
+    color: var(--primary-end);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: var(--primary-start);
+}
+
+/* Header & Navigation */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.header-user-info {
+    display: flex;
+    align-items: center;
+}
+
+.header .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
+    border: 2px solid var(--primary-end);
+}
+
+.header strong {
+    font-size: 1.2em;
+    font-weight: 500;
+}
+
+.nav-bar {
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 0;
+    margin-bottom: 2rem;
+}
+
+.nav-bar a {
+    margin-right: 15px;
+    font-weight: 500;
+}
+
+/* Messages Framework */
+.messages li {
+    padding: 15px;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: 500;
+}
+
+.messages li.success { background: #28a745; }
+.messages li.warning { background: #ffc107; color: var(--text-color); }
+.messages li.error { background: var(--danger); }

@@ -1,0 +1,55 @@
+@media (max-width: 768px) {
+    body { font-size: 16px; }
+    .container {
+        margin: 0;
+        padding: 15px;
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    h1 { font-size: 1.8em; }
+    h2 { font-size: 1.5em; }
+
+    /* Make filter form stack vertically */
+    form select, form button, form .button-link {
+        display: block;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+
+    .poll-list-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .poll-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .poll-actions {
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .poll-actions .button-link {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    /* Stack create poll choice form on mobile */
+    .choice-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .showcase-results, .result-item {
+        display: block;
+    }
+    .result-item { margin-bottom: 1rem; }
+
+}
