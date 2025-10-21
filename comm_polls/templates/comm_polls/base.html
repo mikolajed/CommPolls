@@ -20,9 +20,9 @@
                     <strong>Hello, {{ user.username }}!</strong>
                 </div>
                 <div class="header-actions">
+                    <button id="theme-toggle" class="icon-button" title="Toggle theme">🌙</button>
                     <button onclick="window.location.href='{% url 'comm_polls:account_settings' %}'" class="icon-button" title="Settings">⚙️</button>
                     <button onclick="window.location.href='{% url 'logout' %}'" class="icon-button" title="Logout">🚪</button>
-                    <button id="theme-toggle" class="icon-button" title="Toggle theme">🌙</button>
                 </div>
             </div>
 

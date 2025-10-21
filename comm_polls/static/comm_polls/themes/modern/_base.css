@@ -103,6 +103,12 @@ a:hover {
 }
 
 /* Messages Framework */
+.messages {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+}
+
 .messages li {
     padding: 15px;
     border-radius: 6px;
