@@ -54,7 +54,7 @@ button, .button-link {
     transition: all 0.3s ease;
     text-decoration: none;
     text-align: center;
-    padding: 10px 16px;
+    padding: 10px 14px;
     font-size: 1em;
     font-weight: 500;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -128,7 +128,7 @@ button.danger, .button-link.danger {
 .poll-list-item {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    padding: 15px;
+    padding: 25px;
     border-radius: 8px;
     transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
     flex-grow: 1;

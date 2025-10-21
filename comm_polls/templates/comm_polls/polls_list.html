@@ -14,12 +14,12 @@
                         {% if poll.is_suspended %}<p><span class="suspended-label">(Suspended)</span></p>{% endif %}
                     </div>
                     <div class="poll-actions">
-                        <a href="{% url 'comm_polls:manage_poll' poll.id %}" class="button-link">Manage</a>
                         {% if poll.has_started %}
                             <a href="{% url 'comm_polls:results' poll.id %}" class="button-link secondary">View Results</a>
                         {% else %}
                             <a href="{% url 'comm_polls:poll_countdown' poll.id %}" class="button-link secondary">View Countdown</a>
                         {% endif %}
+                        <a href="{% url 'comm_polls:manage_poll' poll.id %}" class="button-link">Manage</a>
                     </div>
                 </li>
             {% endfor %}
