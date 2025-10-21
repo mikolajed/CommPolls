@@ -51,7 +51,10 @@ class PollForm(forms.ModelForm):
         model = Poll
         fields = ['name', 'description', 'start_date', 'end_date']
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 3}),
+            'name': forms.TextInput(attrs={'placeholder': 'e.g., Favorite Programming Language?'}),
+            'description': forms.Textarea(
+                attrs={'rows': 3, 'placeholder': 'Optional: Add more context to your poll...'}
+            ),
             'start_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }

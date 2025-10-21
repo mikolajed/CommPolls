@@ -5,67 +5,69 @@
 {% block content %}
     <h1>Create a New Poll</h1>
 
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-section">
-            <h2>Poll Details</h2>
-            <div class="poll-details-grid">
-                <div class="form-group">
-                    {{ poll_form.name.label_tag }}
-                    {{ poll_form.name }}
-                    {{ poll_form.name.errors }}
-                </div>
-                <div class="form-group">
-                    {{ poll_form.description.label_tag }}
-                    {{ poll_form.description }}
-                    {{ poll_form.description.errors }}
-                </div>
-                <div class="form-group">
-                    {{ poll_form.start_date.label_tag }}
-                    {{ poll_form.start_date }}
-                    {{ poll_form.start_date.errors }}
-                </div>
-                <div class="form-group">
-                    {{ poll_form.end_date.label_tag }}
-                    {{ poll_form.end_date }}
-                    {{ poll_form.end_date.errors }}
-                </div>
-            </div>
-        </div>
-
-        <hr>
-
-        <div class="form-section">
-            <h2>Choices</h2>
-            <p>You must provide at least two choices.</p>
-            {{ choice_formset.management_form }}
-
-            <div id="choice-form-list">
-                {% for form in choice_formset.forms %}
-                    <div class="choice-form">
-                        <div class="form-group">
-                            {{ form.name }}
-                            {{ form.name.errors }}
-                        </div>
-                        <button type="button" class="remove-choice-form button-link danger">Remove</button>
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-section">
+                <h2>Poll Details</h2>
+                <div class="poll-details-grid">
+                    <div class="form-group">
+                        {{ poll_form.name.label_tag }}
+                        {{ poll_form.name }}
+                        {{ poll_form.name.errors }}
                     </div>
-                {% endfor %}
+                    <div class="form-group">
+                        {{ poll_form.description.label_tag }}
+                        {{ poll_form.description }}
+                        {{ poll_form.description.errors }}
+                    </div>
+                    <div class="form-group">
+                        {{ poll_form.start_date.label_tag }}
+                        {{ poll_form.start_date }}
+                        {{ poll_form.start_date.errors }}
+                    </div>
+                    <div class="form-group">
+                        {{ poll_form.end_date.label_tag }}
+                        {{ poll_form.end_date }}
+                        {{ poll_form.end_date.errors }}
+                    </div>
+                </div>
             </div>
-            <button type="button" id="add-choice-form" class="button-link">Add Choice</button>
-        </div>
 
-        <hr>
-        <button type="submit">Create Poll</button>
-    </form>
+            <hr>
 
-    <template id="choice-form-template">
-        <div class="choice-form">
-            <div class="form-group">
-                {{ choice_formset.empty_form.name }}
+            <div class="form-section">
+                <h2>Choices</h2>
+                <p>You must provide at least two choices.</p>
+                {{ choice_formset.management_form }}
+
+                <div id="choice-form-list">
+                    {% for form in choice_formset.forms %}
+                        <div class="choice-form">
+                            <div class="form-group">
+                                {{ form.name }}
+                                {{ form.name.errors }}
+                            </div>
+                            <button type="button" class="remove-choice-form button-link danger">Remove</button>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" id="add-choice-form" class="button-link">Add Choice</button>
             </div>
-            <button type="button" class="remove-choice-form button-link danger">Remove</button>
-        </div>
-    </template>
+
+            <hr>
+            <button type="submit">Create Poll</button>
+        </form>
+
+        <template id="choice-form-template">
+            <div class="choice-form">
+                <div class="form-group">
+                    {{ choice_formset.empty_form.name }}
+                </div>
+                <button type="button" class="remove-choice-form button-link danger">Remove</button>
+            </div>
+        </template>
+    </div>
 {% endblock %}
 
 {% block extra_head %}
