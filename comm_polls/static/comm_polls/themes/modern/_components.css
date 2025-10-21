@@ -53,6 +53,7 @@ button, .button-link {
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
+    text-align: center;
     padding: 10px 16px;
     font-size: 1em;
     font-weight: 500;
@@ -71,6 +72,35 @@ button:hover, .button-link:hover {
 
 button.danger, .button-link.danger {
     background: var(--danger);
+}
+
+/* This is a general rule, but we'll override it for specific forms like the filter */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+/* Filter Form */
+.filter-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+}
+
+.filter-grid {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.filter-grid .form-group {
+    /* Override default margin to ensure vertical alignment with buttons */
+    margin-bottom: 0;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
 }
 
 /* Poll List */

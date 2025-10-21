@@ -12,11 +12,26 @@
     h2 { font-size: 1.5em; }
 
     /* Make filter form stack vertically */
-    form select, form button, form .button-link {
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-grid {
+        grid-template-columns: 1fr; /* Force single column */
+    }
+
+    .filter-grid .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .filter-actions {
+        flex-direction: column;
+    }
+
+    .filter-actions > * {
         display: block;
         width: 100%;
-        margin-right: 0;
-        margin-bottom: 10px;
         box-sizing: border-box;
     }
 

@@ -6,32 +6,34 @@
 
         <!-- Filter Form -->
         <h2>Filter Polls</h2>
-        <form method="get">
-            <label for="creator">Creator:</label>
-            <select name="creator" id="creator">
-                <option value="">All</option>
-                {% for u in users %}
-                    <option value="{{ u.id }}" {% if selected_creator|stringformat:"s" == u.id|stringformat:"s" %}selected="selected"{% endif %}>{{ u.username }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="voted_status">My Votes:</label>
-            <select name="voted_status" id="voted_status">
-                <option value="">All</option>
-                <option value="voted" {% if filters.voted_status == 'voted' %}selected{% endif %}>Voted</option>
-                <option value="not_voted" {% if filters.voted_status == 'not_voted' %}selected{% endif %}>Not Voted</option>
-            </select>
-
-            <label for="poll_status">Status:</label>
-            <select name="poll_status" id="poll_status">
-                <option value="">All</option>
-                <option value="ongoing" {% if filters.poll_status == 'ongoing' %}selected{% endif %}>Ongoing</option>
-                <option value="ended" {% if filters.poll_status == 'ended' %}selected{% endif %}>Ended</option>
-                <option value="not_started" {% if filters.poll_status == 'not_started' %}selected{% endif %}>Not Started</option>
-            </select>
-
-            <button type="submit">Filter</button>
-            <a href="{% url 'comm_polls:home' %}" class="button-link">Clear</a>
+        <form method="get" class="filter-form">
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label for="creator_name">Creator:</label>
+                    <input type="text" name="creator_name" id="creator_name" value="{{ filters.creator_name|default:'' }}" placeholder="Enter username...">
+                </div>
+                <div class="form-group">
+                    <label for="voted_status">My Votes:</label>
+                    <select name="voted_status" id="voted_status">
+                        <option value="">All</option>
+                        <option value="voted" {% if filters.voted_status == 'voted' %}selected{% endif %}>Voted</option>
+                        <option value="not_voted" {% if filters.voted_status == 'not_voted' %}selected{% endif %}>Not Voted</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="poll_status">Status:</label>
+                    <select name="poll_status" id="poll_status">
+                        <option value="">All</option>
+                        <option value="ongoing" {% if filters.poll_status == 'ongoing' %}selected{% endif %}>Ongoing</option>
+                        <option value="ended" {% if filters.poll_status == 'ended' %}selected{% endif %}>Ended</option>
+                        <option value="not_started" {% if filters.poll_status == 'not_started' %}selected{% endif %}>Not Started</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button type="submit">Filter</button>
+                <a href="{% url 'comm_polls:home' %}" class="button-link">Clear</a>
+            </div>
         </form>
 
         <hr>

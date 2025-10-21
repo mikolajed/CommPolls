@@ -12,15 +12,15 @@ from .models import Poll, Choice, Vote
 def home(request):
     """Home page showing all polls with filtering."""
     polls = Poll.objects.all()
-    users = User.objects.all()
 
     # Filtering logic
-    creator_id = request.GET.get('creator')
+    creator_name = request.GET.get('creator_name')
     voted_status = request.GET.get('voted_status')
     poll_status = request.GET.get('poll_status')
 
-    if creator_id:
-        polls = polls.filter(created_by_id=creator_id)
+    if creator_name:
+        # Filter by username containing the search phrase (case-insensitive)
+        polls = polls.filter(created_by__username__icontains=creator_name)
 
     if poll_status:
         now = timezone.now()
@@ -44,9 +44,7 @@ def home(request):
 
     context = {
         'polls': polls,
-        'users': users,
         'filters': request.GET,
-        'selected_creator': int(creator_id) if creator_id else None
     }
     return render(request, "comm_polls/home.html", context)
 
