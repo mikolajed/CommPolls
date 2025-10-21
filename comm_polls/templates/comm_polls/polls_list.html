@@ -8,12 +8,19 @@
     {% if polls %}
         <ul class="poll-list">
             {% for poll in polls %}
-                <li>
-                    <strong><a href="{% url 'comm_polls:manage_poll' poll.id %}">{{ poll.name }}</a></strong>
-                    <p>Starts: {{ poll.start_date }} | Ends: {{ poll.end_date }}</p>
-                    {% if poll.is_suspended %}
-                        <span class="suspended-label">(Suspended)</span>
-                    {% endif %}
+                <li class="poll-list-item {% if poll.is_suspended %}suspended{% endif %}">
+                    <div class="poll-info">
+                        <strong>{{ poll.name }}</strong>
+                        {% if poll.is_suspended %}<p><span class="suspended-label">(Suspended)</span></p>{% endif %}
+                    </div>
+                    <div class="poll-actions">
+                        <a href="{% url 'comm_polls:manage_poll' poll.id %}" class="button-link">Manage</a>
+                        {% if poll.has_started %}
+                            <a href="{% url 'comm_polls:results' poll.id %}" class="button-link secondary">View Results</a>
+                        {% else %}
+                            <a href="{% url 'comm_polls:poll_countdown' poll.id %}" class="button-link secondary">View Countdown</a>
+                        {% endif %}
+                    </div>
                 </li>
             {% endfor %}
         </ul>

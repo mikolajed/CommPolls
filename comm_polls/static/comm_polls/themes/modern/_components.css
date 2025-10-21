@@ -136,6 +136,7 @@ button.danger, .button-link.danger {
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
+    margin-bottom: 1rem;
 }
 
 .poll-info {
