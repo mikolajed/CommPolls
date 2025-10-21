@@ -1,32 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>CommPolls</title>
-</head>
-<body>
-    {% load static %}
+{% extends "comm_polls/base.html" %}
 
+{% block content %}
     {% if user.is_authenticated %}
-        <!-- Header -->
-        <div>
-            {% if user.profile.avatar %}
-                <img src="{{ user.profile.avatar.url }}" alt="Avatar" style="width:50px;height:50px;border-radius:50%;">
-            {% else %}
-                <span style="font-size:40px;">👤</span>
-            {% endif %}
-            <strong>Hello, {{ user.username }}!</strong>
-        </div>
-
-        <!-- Navigation Bar -->
-        <p>
-            <a href="{% url 'comm_polls:home' %}">Home</a> |
-            <a href="{% url 'comm_polls:polls' %}">Polls</a> |
-            <a href="{% url 'comm_polls:votes' %}">My Votes</a> |
-            <a href="{% url 'comm_polls:create_poll' %}">Create Poll</a> |
-            <a href="{% url 'comm_polls:account_settings' %}">Settings</a> |
-            <a href="{% url 'logout' %}">Logout</a>
-        </p>
-
         <hr>
 
         <!-- Filter Form -->
@@ -56,7 +31,7 @@
             </select>
 
             <button type="submit">Filter</button>
-            <a href="{% url 'comm_polls:home' %}">Clear</a>
+            <a href="{% url 'comm_polls:home' %}" class="button-link">Clear</a>
         </form>
 
         <hr>
@@ -64,39 +39,28 @@
         <!-- Poll List -->
         <h2>All Polls</h2>
         {% if polls %}
-            <ul>
+            <ul class="poll-list">
                 {% for poll in polls %}
-                    <li>
-                        <div {% if poll.is_suspended %}style="opacity: 0.6;"{% endif %}>
-                            <strong>
+                    <li class="poll-list-wrapper">
+                        <div class="poll-list-item {% if poll.is_suspended %}suspended{% endif %}">
+                            <div class="poll-info">
+                                <strong>{{ poll.name }}</strong>
+                                <p>Created by: {{ poll.created_by.username }} {% if poll.is_suspended %}<span class="suspended-label">(Suspended)</span>{% endif %}</p>
+                            </div>
+                            <div class="poll-actions">
                                 {% if poll.has_ended %}
-                                    <a href="{% url 'comm_polls:results' poll.id %}">{{ poll.name }}</a>
+                                    <a href="{% url 'comm_polls:results' poll.id %}" class="button-link">View Results</a>
+                                {% elif poll.has_started %}
+                                    <a href="{% url 'comm_polls:vote' poll.id %}" class="button-link">Vote Now</a>
                                 {% else %}
-                                    <a href="{% url 'comm_polls:vote' poll.id %}">{{ poll.name }}</a>
+                                    <a href="{% url 'comm_polls:poll_countdown' poll.id %}" class="button-link secondary">View Countdown</a>
                                 {% endif %}
-                            </strong> 
-                            {% if poll.is_suspended %}
-                                <span style="color:red;">(Suspended)</span>
-                            {% endif %}
-                            <p>Created by: {{ poll.created_by.username }}</p>
-                            <p>Starts: {{ poll.start_date }} | Ends: {{ poll.end_date }}</p>
-
-                            {% if poll.has_ended %}
-                                <p><strong>Results:</strong></p>
-                                <ul style="font-size: 0.9em; margin-top: 5px;">
-                                    {% for choice in poll.choices.all %}
-                                        <li>{{ choice.name }}: {{ choice.votes_count }} vote{{ choice.votes_count|pluralize }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
+                            </div>
                         </div>
-
                         {% if user.is_authenticated and perms.comm_polls.can_suspend_poll %}
-                            <form action="{% url 'comm_polls:suspend_poll' poll.id %}" method="post" style="display:inline; margin-left: 10px;">
+                            <form action="{% url 'comm_polls:suspend_poll' poll.id %}" method="post" class="suspend-form">
                                 {% csrf_token %}
-                                <button type="submit">
-                                    {% if poll.is_suspended %}Unsuspend{% else %}Suspend{% endif %}
-                                </button>
+                                <button type="submit">{% if poll.is_suspended %}Unsuspend{% else %}Suspend{% endif %}</button>
                             </form>
                         {% endif %}
                     </li>
@@ -105,14 +69,14 @@
         {% else %}
             <p>No polls match your filter criteria.</p>
         {% endif %}
-
     {% else %}
         <!-- Guest View -->
-        <h1>Welcome to CommPolls!</h1>
-        <p>
-            <a href="{% url 'comm_polls:signup' %}">Sign up</a> or 
-            <a href="{% url 'login' %}">Login</a>
-        </p>
+        <div class="guest-view">
+            <h1>Welcome to CommPolls!</h1>
+            <p>
+                <a href="{% url 'comm_polls:signup' %}">Sign up</a> or
+                <a href="{% url 'login' %}">Login</a>
+            </p>
+        </div>
     {% endif %}
-</body>
-</html>
+{% endblock %}

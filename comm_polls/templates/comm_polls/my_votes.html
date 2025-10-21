@@ -1,20 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Votes</title>
-</head>
-<body>
+{% extends "comm_polls/base.html" %}
+
+{% block title %}My Votes{% endblock %}
+
+{% block content %}
     <h1>Polls You’ve Voted On</h1>
 
-    <p>
-        <a href="{% url 'comm_polls:home' %}">Home</a> |
-        <a href="{% url 'comm_polls:polls' %}">My Polls</a> |
-        <a href="{% url 'comm_polls:account_settings' %}">Account Settings</a> |
-        <a href="{% url 'logout' %}">Logout</a>
-    </p>
-
     {% if user_votes %}
-        <ul>
+        <ul class="poll-list">
             {% for vote in user_votes %}
                 <li>
                     <strong>{{ vote.poll.name }}</strong>
@@ -26,5 +18,4 @@
     {% else %}
         <p>You haven't voted on any polls yet.</p>
     {% endif %}
-</body>
-</html>
+{% endblock %}

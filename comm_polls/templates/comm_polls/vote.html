@@ -1,31 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Vote</title>
-</head>
-<body>
-    <h1>Vote on: {{ poll.question }}</h1>
+{% extends "comm_polls/base.html" %}
 
-    <p>
-        <a href="{% url 'comm_polls:home' %}">Home</a> |
-        <a href="{% url 'comm_polls:polls' %}">My Polls</a> |
-        <a href="{% url 'comm_polls:account_settings' %}">Account Settings</a> |
-        <a href="{% url 'logout' %}">Logout</a>
-    </p>
+{% block title %}Vote: {{ poll.name }}{% endblock %}
 
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% block content %}
+    <h1>{{ poll.name }}</h1>
+    {% if poll.description %}
+        <p class="poll-description">{{ poll.description }}</p>
+    {% endif %}
+
+    {% if error_message %}
+        <ul class="messages"><li class="error">{{ error_message }}</li></ul>
+    {% endif %}
 
     <form action="{% url 'comm_polls:vote' poll.id %}" method="post">
         {% csrf_token %}
-        <fieldset>
-            <legend><h2>{{ poll.name }}</h2></legend>
-            <p>{{ poll.description }}</p>
-            {% for choice in poll.choices.all %}
-                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-                <label for="choice{{ forloop.counter }}">{{ choice.name }}</label><br>
-            {% endfor %}
-        </fieldset>
-        <button type="submit">Vote</button>
+        <div class="choice-list">
+        {% for choice in poll.choices.all %}
+            <label class="choice-item" for="choice{{ forloop.counter }}">
+                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" class="choice-radio">
+                <span class="choice-name">{{ choice.name }}</span>
+            </label>
+        {% endfor %}
+        </div>
+        <button type="submit">Cast Your Vote</button>
     </form>
-</body>
-</html>
+{% endblock %}

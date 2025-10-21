@@ -1,127 +1,74 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create Poll</title>
-</head>
-<body>
+{% extends "comm_polls/base.html" %}
+
+{% block title %}Create Poll{% endblock %}
+
+{% block content %}
     <h1>Create a New Poll</h1>
-
-    <p>
-        <a href="{% url 'comm_polls:home' %}">Home</a> |
-        <a href="{% url 'comm_polls:polls' %}">My Polls</a> |
-        <a href="{% url 'comm_polls:account_settings' %}">Account Settings</a> |
-        <a href="{% url 'logout' %}">Logout</a>
-    </p>
-
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
 
     <form method="post">
         {% csrf_token %}
-        <fieldset>
-            <legend>Poll Details</legend>
-            {{ poll_form.as_p }}
-        </fieldset>
+        <div class="form-section">
+            <h2>Poll Details</h2>
+            <div class="poll-details-grid">
+                <div class="form-group">
+                    {{ poll_form.name.label_tag }}
+                    {{ poll_form.name }}
+                    {{ poll_form.name.errors }}
+                </div>
+                <div class="form-group">
+                    {{ poll_form.description.label_tag }}
+                    {{ poll_form.description }}
+                    {{ poll_form.description.errors }}
+                </div>
+                <div class="form-group">
+                    {{ poll_form.start_date.label_tag }}
+                    {{ poll_form.start_date }}
+                    {{ poll_form.start_date.errors }}
+                </div>
+                <div class="form-group">
+                    {{ poll_form.end_date.label_tag }}
+                    {{ poll_form.end_date }}
+                    {{ poll_form.end_date.errors }}
+                </div>
+            </div>
+        </div>
 
-        <fieldset>
-            <legend>Choices</legend>
+        <hr>
+
+        <div class="form-section">
+            <h2>Choices</h2>
+            <p>You must provide at least two choices.</p>
             {{ choice_formset.management_form }}
+
             <div id="choice-form-list">
                 {% for form in choice_formset.forms %}
                     <div class="choice-form">
-                        {{ form.as_p }}
-                        <button type="button" class="remove-choice-form">Remove</button>
+                        <div class="form-group">
+                            {{ form.name }}
+                            {{ form.name.errors }}
+                        </div>
+                        <button type="button" class="remove-choice-form button-link danger">Remove</button>
                     </div>
                 {% endfor %}
             </div>
-            <button type="button" id="add-choice-form">Add Choice</button>
-        </fieldset>
+            <button type="button" id="add-choice-form" class="button-link">Add Choice</button>
+        </div>
 
+        <hr>
         <button type="submit">Create Poll</button>
     </form>
 
     <template id="choice-form-template">
         <div class="choice-form">
-            {{ choice_formset.empty_form.as_p }}
-            <button type="button" class="remove-choice-form">Remove</button>
+            <div class="form-group">
+                {{ choice_formset.empty_form.name }}
+            </div>
+            <button type="button" class="remove-choice-form button-link danger">Remove</button>
         </div>
     </template>
+{% endblock %}
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const addChoiceBtn = document.getElementById('add-choice-form');
-        const formList = document.getElementById('choice-form-list');
-        const formTemplate = document.getElementById('choice-form-template');
-        const totalFormsInput = document.querySelector('input[name$="TOTAL_FORMS"]');
-        const formsetPrefix = totalFormsInput.name.split('-')[0];
-        const mainForm = document.querySelector('form');
-
-        const updateRemoveButtons = () => {
-            const forms = formList.querySelectorAll('.choice-form');
-            const minForms = 2;
-            const canRemove = forms.length > minForms;
-            forms.forEach(form => {
-                const removeBtn = form.querySelector('.remove-choice-form');
-                if (removeBtn) {
-                    removeBtn.style.display = canRemove ? '' : 'none';
-                }
-            });
-        };
-
-        const reindexForms = () => {
-            const forms = formList.querySelectorAll('.choice-form');
-            forms.forEach((form, index) => {
-                const prefixRegex = new RegExp(`(${formsetPrefix}-\d+)`, 'g');
-                const replacement = `${formsetPrefix}-${index}`;
-                form.querySelectorAll('input, select, textarea, label').forEach(el => {
-                    if (el.name) el.name = el.name.replace(prefixRegex, replacement);
-                    if (el.id) el.id = el.id.replace(prefixRegex, replacement);
-                    if (el.htmlFor) el.htmlFor = el.htmlFor.replace(prefixRegex, replacement);
-                });
-            });
-        };
-
-        addChoiceBtn.addEventListener('click', () => {
-            const formNum = formList.querySelectorAll('.choice-form').length;
-            const newFormHtml = formTemplate.innerHTML.replace(/__prefix__/g, formNum);
-            const newFormDiv = document.createElement('div');
-            newFormDiv.innerHTML = newFormHtml;
-            formList.appendChild(newFormDiv.firstElementChild);
-            totalFormsInput.value = formNum + 1;
-            updateRemoveButtons();
-        });
-
-        formList.addEventListener('click', (e) => {
-            if (e.target.classList.contains('remove-choice-form')) {
-                e.target.closest('.choice-form').remove();
-                totalFormsInput.value = formList.querySelectorAll('.choice-form').length;
-                reindexForms();
-                updateRemoveButtons();
-            }
-        });
-
-        mainForm.addEventListener('submit', (e) => {
-            let filledForms = 0;
-            formList.querySelectorAll('.choice-form input[name$="-name"]').forEach(input => {
-                if (input.value.trim() !== '') {
-                    filledForms++;
-                }
-            });
-
-            if (filledForms < 2) {
-                e.preventDefault();
-                alert('You must provide at least two choices with a name.');
-            }
-        });
-
-        // Initial setup
-        updateRemoveButtons();
-    });
-    </script>
-</body>
-</html>
+{% block extra_head %}
+    {% load static %}
+    <script src="{% static 'comm_polls/create_poll.js' %}" defer></script>
+{% endblock %}

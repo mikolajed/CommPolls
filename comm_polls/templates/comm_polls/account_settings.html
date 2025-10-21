@@ -1,28 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Account Settings - CommPolls</title>
-</head>
-<body>
+{% extends "comm_polls/base.html" %}
+
+{% block title %}Account Settings{% endblock %}
+
+{% block content %}
     <h1>Account Settings</h1>
-
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save Changes</button>
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {{ field.errors }}
+            </div>
+        {% endfor %}
+        <button type="submit">Update Account</button>
     </form>
-
+    <hr>
     <p>
-        <a href="{% url 'comm_polls:password_change' %}">Change Password</a> |
-        <a href="{% url 'comm_polls:home' %}">Back to Home</a>
+        <a href="{% url 'password_change' %}">Change Password</a>
     </p>
-</body>
-</html>
+{% endblock %}

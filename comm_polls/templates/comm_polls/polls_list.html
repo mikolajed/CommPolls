@@ -1,36 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Polls</title>
-</head>
-<body>
-    <h1>Your Polls</h1>
+{% extends "comm_polls/base.html" %}
 
-    <p>
-        <a href="{% url 'comm_polls:home' %}">Home</a> |
-        <a href="{% url 'comm_polls:create_poll' %}">Create Poll</a> |
-        <a href="{% url 'comm_polls:account_settings' %}">Account Settings</a> |
-        <a href="{% url 'logout' %}">Logout</a>
-    </p>
+{% block title %}My Polls{% endblock %}
+
+{% block content %}
+    <h1>My Created Polls</h1>
 
     {% if polls %}
-        <ul>
+        <ul class="poll-list">
             {% for poll in polls %}
                 <li>
-                    <strong>{{ poll.name }}</strong> –
-                    <a href="{% url 'comm_polls:manage_poll' poll.id %}">Manage</a> |
-                    {% if not poll.has_started %}
-                        <a href="{% url 'comm_polls:poll_countdown' poll.id %}">View Countdown</a>
-                    {% elif poll.has_ended %}
-                        <a href="{% url 'comm_polls:results' poll.id %}">View Results</a>
-                    {% else %}
-                        <a href="{% url 'comm_polls:vote' poll.id %}">Vote</a>
+                    <strong><a href="{% url 'comm_polls:manage_poll' poll.id %}">{{ poll.name }}</a></strong>
+                    <p>Starts: {{ poll.start_date }} | Ends: {{ poll.end_date }}</p>
+                    {% if poll.is_suspended %}
+                        <span class="suspended-label">(Suspended)</span>
                     {% endif %}
                 </li>
             {% endfor %}
         </ul>
     {% else %}
-        <p>You haven’t created any polls yet.</p>
+        <p>You have not created any polls yet. <a href="{% url 'comm_polls:create_poll' %}">Create one now!</a></p>
     {% endif %}
-</body>
-</html>
+{% endblock %}

@@ -37,6 +37,11 @@ class Poll(models.Model):
         """Returns True if poll end date passed"""
         return timezone.now() > self.end_date
 
+    @property
+    def total_votes(self):
+        """Returns the total number of votes for this poll."""
+        return self.poll_votes.count()
+
 
 class Choice(models.Model):
     poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name="choices")

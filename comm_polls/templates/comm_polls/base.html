@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}CommPolls{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'comm_polls/style.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        {% if user.is_authenticated %}
+            <div class="header">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="avatar">
+                {% else %}
+                    <span class="avatar-placeholder">👤</span>
+                {% endif %}
+                <strong>Hello, {{ user.username }}!</strong>
+            </div>
+
+            <nav class="nav-bar">
+                <a href="{% url 'comm_polls:home' %}">Home</a>
+                <a href="{% url 'comm_polls:polls' %}">My Polls</a>
+                <a href="{% url 'comm_polls:votes' %}">My Votes</a>
+                <a href="{% url 'comm_polls:create_poll' %}">Create Poll</a>
+                <a href="{% url 'comm_polls:account_settings' %}">Settings</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            </nav>
+        {% endif %}
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

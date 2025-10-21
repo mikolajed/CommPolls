@@ -1,47 +1,43 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Poll Results</title>
-</head>
-<body data-poll-id="{{ poll.id }}">
-    <h1>{{ poll.name }}</h1>
-    <p>{{ poll.description }}</p>
+{% extends "comm_polls/base.html" %}
 
-    <ul id="poll-results">
-    {% for choice in poll.choices.all %}
-        <li data-choice-id="{{ choice.id }}">{{ choice.name }} -- <span class="votes-count">{{ choice.votes_count }}</span> vote<span class="pluralize">{{ choice.votes_count|pluralize }}</span></li>
-    {% endfor %}
-    </ul>
+{% block title %}Results: {{ poll.name }}{% endblock %}
 
-    <a href="{% url 'comm_polls:home' %}">Back to Polls</a>
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const pollId = document.body.dataset.pollId;
-            const resultsUrl = `/api/polls/${pollId}/results/`;
+{% block content %}
+    <h1>Results for: {{ poll.name }}</h1>
+    <p>Total votes: {{ poll.total_votes }}</p>
 
-            const updateResults = async () => {
-                try {
-                    const response = await fetch(resultsUrl);
-                    if (!response.ok) return;
-                    const data = await response.json();
+    <div class="chart-container">
+        <canvas id="resultsChart"
+                data-labels='[{% for choice in choices %}"{{ choice.name|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]'
+                data-votes='[{% for choice in choices %}{{ choice.votes_count }}{% if not forloop.last %},{% endif %}{% endfor %}]'>
+        </canvas>
+    </div>
 
-                    for (const [choiceId, votes] of Object.entries(data)) {
-                        const choiceElement = document.querySelector(`li[data-choice-id='${choiceId}']`);
-                        if (choiceElement) {
-                            const votesCountElement = choiceElement.querySelector('.votes-count');
-                            const pluralizeElement = choiceElement.querySelector('.pluralize');
-                            votesCountElement.textContent = votes;
-                            pluralizeElement.textContent = votes !== 1 ? 's' : '';
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error fetching poll results:', error);
-                }
-            };
+    <hr>
 
-            setInterval(updateResults, 5000); // Update every 5 seconds
-        });
-    </script>
-</body>
-</html>
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th>Choice</th>
+                <th>Votes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for choice in choices %}
+                <tr>
+                    <td>{{ choice.name }}</td>
+                    <td>{{ choice.votes_count }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <a href="{% url 'comm_polls:home' %}" class="button-link">Back to Home</a>
+
+    {% load static %}
+    <script src="{% static 'comm_polls/results.js' %}"></script>
+{% endblock %}

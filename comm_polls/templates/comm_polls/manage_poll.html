@@ -1,40 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Manage Poll</title>
-</head>
-<body>
+{% extends "comm_polls/base.html" %}
+
+{% block title %}Manage Poll: {{ poll.name }}{% endblock %}
+
+{% block content %}
     <h1>Manage Poll: {{ poll.name }}</h1>
 
-    <p>
-        <a href="{% url 'comm_polls:home' %}">Home</a> |
-        <a href="{% url 'comm_polls:polls' %}">My Polls</a> |
-        <a href="{% url 'comm_polls:account_settings' %}">Account Settings</a> |
-        <a href="{% url 'logout' %}">Logout</a>
-    </p>
-
     <h2>Poll Results</h2>
-    <ul>
-    {% for choice in poll.choices.all %}
-        <li>{{ choice.name }} -- {{ choice.votes_count }} vote{{ choice.votes_count|pluralize }}</li>
-    {% endfor %}
-    </ul>
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th>Choice</th>
+                <th>Votes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for choice in choices %}
+                <tr>
+                    <td>{{ choice.name }}</td>
+                    <td>{{ choice.votes_count }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     <hr>
 
-    <h2>Manage Poll</h2>
+    <div class="manage-section">
+        <h2>Manage Poll</h2>
 
-    <form method="post" style="margin-top: 1rem;">
-        {% csrf_token %}
-        <h3>Close Poll</h3>
-        <p>This will close the poll to new votes immediately.</p>
-        <button type="submit" name="close_poll">Close Poll Now</button>
-    </form>
+        <form method="post">
+            {% csrf_token %}
+            <h3>Close Poll</h3>
+            <p>This will close the poll to new votes immediately.</p>
+            <button type="submit" name="close_poll">Close Poll Now</button>
+        </form>
+    </div>
 
     <hr>
 
-    <h2>Delete Poll</h2>
-    <p>This action cannot be undone.</p>
-    <a href="{% url 'comm_polls:delete_poll' poll.id %}">Delete this Poll</a>
-</body>
-</html>
+    <div class="manage-section danger-zone">
+        <h2>Delete Poll</h2>
+        <p>This action cannot be undone.</p>
+        <form action="{% url 'comm_polls:delete_poll' poll.id %}" method="get" style="margin-bottom: 0;">
+            <button type="submit" class="danger">Delete this Poll</button>
+        </form>
+    </div>
+{% endblock %}
