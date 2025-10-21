@@ -57,6 +57,13 @@ textarea {
     padding: 0 10px;
 }
 
+.form-help-text {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.9em;
+    margin-top: 0.5rem;
+}
+
 .form-container {
     max-width: 700px;
     margin: 0 auto;
