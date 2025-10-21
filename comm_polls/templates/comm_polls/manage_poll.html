@@ -5,32 +5,13 @@
 {% block content %}
     <h1>Manage Poll: {{ poll.name }}</h1>
 
-    <h2>Poll Results</h2>
-    <table class="results-table">
-        <thead>
-            <tr>
-                <th>Choice</th>
-                <th>Votes</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for choice in choices %}
-                <tr>
-                    <td>{{ choice.name }}</td>
-                    <td>{{ choice.votes_count }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
     <hr>
 
     <div class="manage-section">
-        <h2>Manage Poll</h2>
+        <h2>Close Poll</h2>
 
         <form method="post">
             {% csrf_token %}
-            <h3>Close Poll</h3>
             <p>This will close the poll to new votes immediately.</p>
             <button type="submit" name="close_poll">Close Poll Now</button>
         </form>

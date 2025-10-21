@@ -103,10 +103,7 @@ def manage_poll(request, poll_id):
             messages.success(request, 'Poll has been closed.')
             return redirect('comm_polls:manage_poll', poll_id=poll.id)
 
-    # Sort choices by vote count
-    choices = poll.choices.all().order_by('-votes_count')
-
-    return render(request, "comm_polls/manage_poll.html", {"poll": poll, "choices": choices})
+    return render(request, "comm_polls/manage_poll.html", {"poll": poll})
 
 
 @login_required
