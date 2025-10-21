@@ -4,19 +4,22 @@
     <title>{% block title %}CommPolls{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
-    <link rel="stylesheet" href="{% static 'comm_polls/style.css' %}">
+    <link rel="stylesheet" href="{% static 'comm_polls/modern-theme.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
 <body>
     <div class="container">
         {% if user.is_authenticated %}
             <div class="header">
-                {% if user.profile.avatar %}
-                    <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="avatar">
-                {% else %}
-                    <span class="avatar-placeholder">👤</span>
-                {% endif %}
-                <strong>Hello, {{ user.username }}!</strong>
+                <div class="header-user-info">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="avatar">
+                    {% else %}
+                        <span class="avatar-placeholder">👤</span>
+                    {% endif %}
+                    <strong>Hello, {{ user.username }}!</strong>
+                </div>
+                <button id="theme-toggle" class="theme-switcher" title="Toggle theme">🌙</button>
             </div>
 
             <nav class="nav-bar">
@@ -39,5 +42,6 @@
 
         {% block content %}{% endblock %}
     </div>
+    <script src="{% static 'comm_polls/theme-switcher.js' %}"></script>
 </body>
 </html>

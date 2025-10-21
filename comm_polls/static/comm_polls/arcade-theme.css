@@ -1,0 +1,248 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+:root {
+    --dark-bg: #0d0d0d;
+    --main-text: #d4d4d4;
+    --primary-neon: #00ffff; /* Cyan */
+    --secondary-neon: #ff00ff; /* Magenta */
+    --danger-neon: #ff4136; /* Red */
+    --warning-neon: #ffdc00; /* Yellow */
+    --success-neon: #00ff00; /* Green */
+    --border-color: #333;
+    --font-family: 'VT323', monospace;
+}
+
+/* General Body Styles */
+body {
+    font-family: var(--font-family);
+    line-height: 1.5;
+    background-color: var(--dark-bg);
+    color: var(--main-text);
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+.container {
+    max-width: 960px;
+    margin: 20px auto;
+    background: #1a1a1a;
+    padding: 20px 30px;
+    border: 2px solid var(--primary-neon);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+h1, h2, h3 {
+    color: var(--primary-neon);
+    text-shadow: 0 0 5px var(--primary-neon);
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: var(--border-color);
+    margin: 2rem 0;
+}
+
+a {
+    color: var(--secondary-neon);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    text-shadow: 0 0 5px var(--secondary-neon);
+}
+
+/* Header & Navigation */
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.header .avatar {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+    object-fit: cover;
+    border: 2px solid var(--secondary-neon);
+}
+
+.header strong {
+    font-size: 1.2em;
+    color: var(--primary-neon);
+}
+
+.nav-bar {
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 0;
+    margin-bottom: 2rem;
+}
+
+.nav-bar a {
+    margin-right: 15px;
+    font-weight: 500;
+}
+
+/* Forms & Buttons */
+label {
+    font-weight: bold;
+    margin-right: 0.5rem;
+    color: var(--primary-neon);
+}
+
+select, button, input[type="text"], input[type="email"], input[type="password"], input[type="datetime-local"], input[type="file"], textarea {
+    background: var(--dark-bg);
+    color: var(--main-text);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    font-family: var(--font-family);
+    font-size: 1em;
+    letter-spacing: 1px;
+}
+
+select:focus, input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-neon);
+    box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+}
+
+button, .button-link {
+    background-color: transparent;
+    color: var(--primary-neon);
+    border: 2px solid var(--primary-neon);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    padding: 8px 12px;
+    font-size: 1em;
+}
+
+button:hover, .button-link:hover {
+    background-color: var(--primary-neon);
+    color: var(--dark-bg);
+    box-shadow: 0 0 10px var(--primary-neon);
+    text-decoration: none;
+}
+
+.button-link.secondary {
+    color: var(--secondary-neon);
+    border-color: var(--secondary-neon);
+}
+.button-link.secondary:hover {
+    background-color: var(--secondary-neon);
+    color: var(--dark-bg);
+    box-shadow: 0 0 10px var(--secondary-neon);
+}
+
+button.danger, .button-link.danger {
+    color: var(--danger-neon);
+    border-color: var(--danger-neon);
+}
+button.danger:hover, .button-link.danger:hover {
+    background-color: var(--danger-neon);
+    color: var(--dark-bg);
+    box-shadow: 0 0 10px var(--danger-neon);
+}
+
+/* Poll List */
+.poll-list {
+    list-style: none;
+    padding: 0;
+}
+
+.poll-list-item {
+    background: #111;
+    border: 1px solid var(--border-color);
+    padding: 15px;
+}
+
+.poll-list p {
+    color: #888;
+}
+
+/* Messages Framework */
+.messages li {
+    padding: 15px;
+    border-width: 2px;
+    border-style: solid;
+    color: var(--dark-bg);
+    font-weight: bold;
+}
+
+.messages li.success { background-color: var(--success-neon); border-color: var(--success-neon); }
+.messages li.warning { background-color: var(--warning-neon); border-color: var(--warning-neon); }
+.messages li.error { background-color: var(--danger-neon); border-color: var(--danger-neon); }
+
+/* Vote Page */
+.choice-item {
+    background: transparent;
+    border: 2px solid var(--border-color);
+    transition: all 0.2s ease-in-out;
+}
+
+.choice-item:hover {
+    border-color: var(--secondary-neon);
+    background-color: rgba(255, 0, 255, 0.1);
+}
+
+.choice-radio:checked + .choice-name {
+    color: var(--secondary-neon);
+    text-shadow: 0 0 5px var(--secondary-neon);
+}
+
+.choice-item input:checked {
+    accent-color: var(--secondary-neon);
+}
+
+/* Results Table */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.results-table th, .results-table td {
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.results-table th {
+    background-color: #222;
+    color: var(--primary-neon);
+}
+
+/* Chart.js Dark Mode */
+.chart-container {
+    background-color: #111;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body { font-size: 16px; }
+    .container {
+        margin: 0;
+        padding: 15px;
+        width: 100%;
+        border: none;
+        box-shadow: none;
+    }
+
+    h1 { font-size: 1.8em; }
+    h2 { font-size: 1.5em; }
+
+    /* Make filter form stack vertically */
+    form select, form button, form .button-link {
+        display: block;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+}
