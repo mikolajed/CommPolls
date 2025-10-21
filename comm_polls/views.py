@@ -61,7 +61,11 @@ def polls_list(request):
 @login_required
 def my_votes(request):
     """Show polls the user has voted on."""
-    user_votes = Vote.objects.filter(voter=request.user).select_related('poll', 'choice')
+    user_votes = Vote.objects.filter(voter=request.user).select_related(
+        'poll', 'choice'
+    ).prefetch_related(
+        'poll__choices'  # Efficiently prefetch all choices for the polls
+    )
     return render(request, "comm_polls/my_votes.html", {"user_votes": user_votes})
 
 

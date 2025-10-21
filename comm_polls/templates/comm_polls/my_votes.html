@@ -8,10 +8,25 @@
     {% if user_votes %}
         <ul class="poll-list">
             {% for vote in user_votes %}
-                <li>
-                    <strong>{{ vote.poll.name }}</strong>
-                    <p>Your choice: {{ vote.choice.name }}</p>
-                    <a href="{% url 'comm_polls:results' vote.poll.id %}">View Results</a>
+                <li class="poll-list-item">
+                    <div class="poll-results-container">
+                        <div class="poll-results-header">
+                            <strong>{{ vote.poll.name }}</strong>
+                            <p>Total votes: {{ vote.poll.total_votes }}</p>
+                        </div>
+                        <div class="showcase-results">
+                            {% for choice in vote.poll.choices.all %}
+                                {% with percentage|floatformat:0 as percentage_int %}
+                                    {% widthratio choice.votes_count vote.poll.total_votes 100 as percentage %}
+                                    <div class="result-item {% if vote.choice.id == choice.id %}voted-for{% endif %}">
+                                        <span class="result-label">{{ choice.name }}</span>
+                                        <div class="result-bar"><div class="bar-fill" style="width: {{ percentage }}%;"></div></div>
+                                        <span class="result-percent">{{ percentage|floatformat:0 }}%</span>
+                                    </div>
+                                {% endwith %}
+                            {% endfor %}
+                        </div>
+                    </div>
                 </li>
             {% endfor %}
         </ul>

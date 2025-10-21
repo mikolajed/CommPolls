@@ -212,6 +212,20 @@ button.danger, .button-link.danger {
     to { opacity: 1; transform: scale(1); }
 }
 
+/* My Votes Page Layout */
+.poll-results-container {
+    width: 100%;
+}
+
+.poll-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1rem;
+}
+.poll-results-header p {
+    margin: 0;
+}
 /* Poll List */
 .poll-list {
     list-style: none;
