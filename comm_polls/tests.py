@@ -1,9 +1,11 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.contrib.auth.models import User
 from django.urls import reverse
 from .models import Profile
 from django.utils import timezone
 
+
+@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class UserTests(TestCase):
 
     def setUp(self):
