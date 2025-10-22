@@ -13,6 +13,7 @@
 
     /* Make filter form stack vertically */
     .filter-form {
+        display: flex;
         flex-direction: column;
         align-items: stretch;
     }
