@@ -24,7 +24,10 @@
         </div>
         <div class="vote-footer">
             {% if not poll.has_ended %}
-                <div class="vote-countdown" data-end-time="{{ poll.end_date.isoformat }}">
+                <div class="vote-countdown"
+                     data-end-time="{{ poll.end_date.isoformat }}"
+                     data-server-time="{{ server_now }}"
+                >
                     <span class="time-left-label">Time left:</span> <span id="vote-timer-display" class="vote-timer-display"></span>
                 </div>
             {% endif %}

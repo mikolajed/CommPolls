@@ -202,7 +202,11 @@ def vote(request, poll_id):
             messages.success(request, 'Your vote has been recorded!')
             return redirect('comm_polls:results', poll_id=poll.id)
     
-    return render(request, "comm_polls/vote.html", {"poll": poll})
+    context = {
+        "poll": poll,
+        "server_now": timezone.now().isoformat(),
+    }
+    return render(request, "comm_polls/vote.html", context)
 
 
 @login_required
