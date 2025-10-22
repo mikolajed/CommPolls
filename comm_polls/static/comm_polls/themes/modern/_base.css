@@ -119,3 +119,8 @@ a:hover {
 .messages li.success { background: #28a745; }
 .messages li.warning { background: #ffc107; color: var(--text-color); }
 .messages li.error { background: var(--danger); }
+
+/* Main content area for SPA navigation */
+#main-content {
+    transition: opacity 0.2s ease-in-out;
+}
