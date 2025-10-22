@@ -82,11 +82,6 @@ def create_poll(request):
             poll = poll_form.save(commit=False)
             poll.created_by = request.user
 
-            # Make datetimes timezone-aware before saving.
-            # This is crucial for correct comparisons with timezone.now().
-            poll.start_date = timezone.make_aware(poll.start_date)
-            poll.end_date = timezone.make_aware(poll.end_date)
-
             poll.save()
             # Save choices
             choice_formset.instance = poll
