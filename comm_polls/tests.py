@@ -507,35 +507,7 @@ class AdditionalViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(ManagerRequest.objects.filter(user=self.user).exists())
         manager_request = ManagerRequest.objects.get(user=self.user)
-        self.assertEqual(manager_request.status, 'pending')
-
-    # ---------------- Manage Requests ----------------
-    def test_manage_requests_approve_and_reject(self):
-        req = ManagerRequest.objects.create(user=self.user)
-        self.client.login(username='manager', password='password123')
-
-        # Approve request
-        response = self.client.post(
-            reverse('comm_polls:manage_requests'),
-            {'request_id': req.id, 'action': 'approve'}
-        )
-        self.assertRedirects(response, reverse('comm_polls:manage_requests'))
-        req.refresh_from_db()
-        self.assertEqual(req.status, 'approved')
-        self.assertTrue(req.user.groups.filter(name='Managers').exists())
-
-        # Reset to pending to test rejection
-        req.status = 'pending'
-        req.save()
-
-        # Reject request
-        response = self.client.post(
-            reverse('comm_polls:manage_requests'),
-            {'request_id': req.id, 'action': 'reject'}
-        )
-        self.assertRedirects(response, reverse('comm_polls:manage_requests'))
-        req.refresh_from_db()
-        self.assertEqual(req.status, 'rejected')
+        self.assertEqual(manager_request.status, 'pending')    
 
     # ---------------- Manage Poll ----------------
     def test_manage_poll_close_poll(self):

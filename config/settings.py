@@ -74,19 +74,25 @@ WSGI_APPLICATION = "config.wsgi.application"
 # ---------------------------------------------------------------------
 # Database
 # ---------------------------------------------------------------------
-# Use PostgreSQL in Docker, fall back to SQLite for local development if DB_HOST is not set.
-if os.getenv("DB_HOST"):
+DB_HOST = os.getenv("DB_HOST")
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_PORT = os.getenv("DB_PORT", "5432")
+
+if DB_HOST:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("DB_NAME"),
-            "USER": os.getenv("DB_USER"),
-            "PASSWORD": os.getenv("DB_PASSWORD"),
-            "HOST": os.getenv("DB_HOST"),
-            "PORT": os.getenv("DB_PORT", "5432"),
+            "NAME": DB_NAME,
+            "USER": DB_USER,
+            "PASSWORD": DB_PASSWORD,
+            "HOST": DB_HOST,
+            "PORT": DB_PORT,
         }
     }
 else:
+    # Fallback to SQLite for local development if DB_HOST is not set
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
