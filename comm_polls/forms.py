@@ -65,15 +65,10 @@ class ChoiceForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': 'Enter choice name'}),
         required=True
     )
-    details = forms.CharField(
-        label='Details',
-        widget=forms.Textarea(attrs={'rows': 2, 'placeholder': 'Optional details'}),
-        required=False
-    )
 
     class Meta:
         model = Choice
-        fields = ['name', 'details']
+        fields = ['name']
 
 class BaseChoiceFormSet(forms.BaseInlineFormSet):
     def clean(self):
