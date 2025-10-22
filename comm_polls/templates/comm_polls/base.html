@@ -15,7 +15,7 @@
                     {% if user.profile.avatar %}
                         <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="avatar">
                     {% else %}
-                        <span class="avatar-placeholder">👤</span>
+                        <img src="{% static 'comm_polls/images/default_avatar.png' %}" alt="Default Avatar" class="avatar">
                     {% endif %}
                     <strong>Hello, {{ user.username }}!</strong>
                 </div>
