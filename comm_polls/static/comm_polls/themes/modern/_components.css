@@ -100,26 +100,18 @@ button.danger, .button-link.danger {
 
 /* Filter Form */
 .filter-form {
-    display: flex;
-    align-items: flex-end;
-    gap: 1rem;
-}
-
-.filter-grid {
-    flex-grow: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    /* Give more space to the creator input, and let buttons be auto-sized */
+    grid-template-columns: 1.5fr 1fr 1fr 1fr auto auto;
+    align-items: end; /* Align items to the bottom for vertical consistency */
     gap: 1rem;
 }
 
-.filter-grid .form-group {
+.filter-form .form-group {
     /* Override default margin to ensure vertical alignment with buttons */
     margin-bottom: 0;
-}
-
-.filter-actions {
-    display: flex;
-    gap: 0.5rem;
+    /* Make form groups span 2 columns each if there are only 3 items */
+    /* This is a fallback for when the sort_by is not present */
 }
 
 /* My Votes Page Item */

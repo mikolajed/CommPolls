@@ -11,12 +11,13 @@ from .models import Poll, Choice, Vote, ManagerRequest
 
 def home(request):
     """Home page showing all polls with filtering."""
-    polls = Poll.objects.all()
+    polls = Poll.objects.order_by('-created_at') # Default sort
 
     # Filtering logic
     creator_name = request.GET.get('creator_name')
     voted_status = request.GET.get('voted_status')
     poll_status = request.GET.get('poll_status')
+    sort_by = request.GET.get('sort_by')
 
     if creator_name:
         # Filter by username containing the search phrase (case-insensitive)
@@ -37,6 +38,10 @@ def home(request):
             polls = polls.filter(id__in=voted_poll_ids)
         elif voted_status == 'not_voted':
             polls = polls.exclude(id__in=voted_poll_ids)
+
+    # Sorting logic
+    if sort_by in ['end_date', 'start_date', 'name', '-created_at']:
+        polls = polls.order_by(sort_by)
 
     is_manager = False
     if request.user.is_authenticated:

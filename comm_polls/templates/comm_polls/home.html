@@ -11,33 +11,38 @@
         <!-- Filter Form -->
         <h2>Filter Polls</h2>
         <form method="get" class="filter-form">
-            <div class="filter-grid">
-                <div class="form-group">
-                    <label for="creator_name">Creator:</label>
-                    <input type="text" name="creator_name" id="creator_name" value="{{ filters.creator_name|default:'' }}" placeholder="Enter username...">
-                </div>
-                <div class="form-group">
-                    <label for="voted_status">My Votes:</label>
-                    <select name="voted_status" id="voted_status">
-                        <option value="">All</option>
-                        <option value="voted" {% if filters.voted_status == 'voted' %}selected{% endif %}>Voted</option>
-                        <option value="not_voted" {% if filters.voted_status == 'not_voted' %}selected{% endif %}>Not Voted</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="poll_status">Status:</label>
-                    <select name="poll_status" id="poll_status">
-                        <option value="">All</option>
-                        <option value="ongoing" {% if filters.poll_status == 'ongoing' %}selected{% endif %}>Ongoing</option>
-                        <option value="ended" {% if filters.poll_status == 'ended' %}selected{% endif %}>Ended</option>
-                        <option value="not_started" {% if filters.poll_status == 'not_started' %}selected{% endif %}>Not Started</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label for="creator_name">Creator:</label>
+                <input type="text" name="creator_name" id="creator_name" value="{{ filters.creator_name|default:'' }}" placeholder="Enter username...">
             </div>
-            <div class="filter-actions">
-                <button type="submit">Filter</button>
-                <a href="{% url 'comm_polls:home' %}" class="button-link">Clear</a>
+            <div class="form-group">
+                <label for="voted_status">My Votes:</label>
+                <select name="voted_status" id="voted_status">
+                    <option value="">All</option>
+                    <option value="voted" {% if filters.voted_status == 'voted' %}selected{% endif %}>Voted</option>
+                    <option value="not_voted" {% if filters.voted_status == 'not_voted' %}selected{% endif %}>Not Voted</option>
+                </select>
             </div>
+            <div class="form-group">
+                <label for="poll_status">Status:</label>
+                <select name="poll_status" id="poll_status">
+                    <option value="">All</option>
+                    <option value="ongoing" {% if filters.poll_status == 'ongoing' %}selected{% endif %}>Ongoing</option>
+                    <option value="ended" {% if filters.poll_status == 'ended' %}selected{% endif %}>Ended</option>
+                    <option value="not_started" {% if filters.poll_status == 'not_started' %}selected{% endif %}>Not Started</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="sort_by">Sort By:</label>
+                <select name="sort_by" id="sort_by">
+                    <option value="-created_at" {% if filters.sort_by == '-created_at' %}selected{% endif %}>Newest</option>
+                    <option value="end_date" {% if filters.sort_by == 'end_date' %}selected{% endif %}>Ending Soon</option>
+                    <option value="start_date" {% if filters.sort_by == 'start_date' %}selected{% endif %}>Starting Soon</option>
+                    <option value="name" {% if filters.sort_by == 'name' %}selected{% endif %}>Name (A-Z)</option>
+                </select>
+            </div>
+            <button type="submit">Filter</button>
+            <a href="{% url 'comm_polls:home' %}" class="button-link">Clear</a>
         </form>
 
         <hr>
