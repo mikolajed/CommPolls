@@ -22,8 +22,18 @@
             </label>
         {% endfor %}
         </div>
-        <div class="form-actions">
-            <button type="submit">Cast Your Vote</button>
+        <div class="vote-footer">
+            {% if not poll.has_ended %}
+                <div class="vote-countdown" data-end-time="{{ poll.end_date.isoformat }}">
+                    <span class="time-left-label">Time left:</span> <span id="vote-timer-display" class="vote-timer-display"></span>
+                </div>
+            {% endif %}
+            <button type="submit" class="button-link">Cast Your Vote</button>
         </div>
     </form>
+{% endblock %}
+
+{% block extra_head %}
+    {% load static %}
+    <script src="{% static 'comm_polls/scripts/vote-countdown.js' %}" defer></script>
 {% endblock %}
