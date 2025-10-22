@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
 
+# Minimal 1x1 transparent PNG for ImageField tests
+PNG_1X1_TRANSPARENT = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\xda\xed\xc1\x01\x01\x00\x00\x00\xc2\xa0\xf7Om\x00\x00\x00\x00IEND\xaeB`\x82'
+
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class UserIntegrationTests(TestCase):
@@ -48,29 +51,15 @@ class UserIntegrationTests(TestCase):
         """User can update username, email, and upload avatar"""
         self.client.login(username='testuser', password='password123')
 
-        avatar_file = SimpleUploadedFile(
-            "avatar.png", b"fake-image-content", content_type="image/png"
-        )
+        avatar_file = SimpleUploadedFile("avatar.png", PNG_1X1_TRANSPARENT, content_type="image/png")
 
         response = self.client.post(
             reverse('comm_polls:account_settings'),
-            {
-                'username': 'updateduser',
-                'email': 'updated@example.com',
-                'avatar': avatar_file,
-            },
-            follow=True
-        )
-        self.assertEqual(response.status_code, 200)
-        response = self.client.post(
-            reverse('comm_polls:account_settings'),
-            {
-                'username': 'updateduser',
-                'email': 'updated@example.com',
-            },
+            {'username': 'updateduser', 'email': 'updated@example.com'},
             files={'avatar': avatar_file},
             follow=True
         )
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Your account details have been updated.')
 
         user = get_user_model().objects.get(pk=self.user.pk)

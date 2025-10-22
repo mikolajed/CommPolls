@@ -5,7 +5,7 @@ from .models import Profile, Poll, Choice
 from django.forms import inlineformset_factory
 
 class SignUpForm(UserCreationForm):
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(required=True, label='Email')
     avatar = forms.ImageField(required=False)
 
     def __init__(self, *args, **kwargs):
@@ -20,11 +20,9 @@ class SignUpForm(UserCreationForm):
         fields = ("username", "email", "password1", "password2")  # avatar handled separately
 
     def save(self, commit=True):
-        # Save user instance but don't commit yet
         user = super().save(commit=False)
         if commit:
-            user.save()  # save the user first
-            # Ensure profile exists
+            user.save()
             profile, created = Profile.objects.get_or_create(user=user)
             avatar = self.cleaned_data.get('avatar')
             if avatar:
@@ -43,11 +41,10 @@ class UserUpdateForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         if commit:
-            user.save()  # save user first
-            # Ensure profile exists
+            user.save()
             profile, created = Profile.objects.get_or_create(user=user)
             avatar = self.cleaned_data.get('avatar')
-            if avatar is not None:
+            if avatar:
                 profile.avatar = avatar
                 profile.save()
         return user
@@ -66,16 +63,18 @@ class PollForm(forms.ModelForm):
             'end_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
+
 class ChoiceForm(forms.ModelForm):
     name = forms.CharField(
         label='Choice Name',
         widget=forms.TextInput(attrs={'placeholder': 'Enter choice name'}),
-        required=True
+        required=False  # Validation handled in formset
     )
 
     class Meta:
         model = Choice
         fields = ['name']
+
 
 class BaseChoiceFormSet(forms.BaseInlineFormSet):
     def clean(self):
@@ -83,23 +82,29 @@ class BaseChoiceFormSet(forms.BaseInlineFormSet):
         if any(self.errors):
             return
 
+        # Count only forms that have a non-empty 'name' field and are not deleted
         filled_forms = 0
         for form in self.forms:
-            if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                if form.cleaned_data.get('name'):
+            if hasattr(form, 'cleaned_data'):
+                name = form.cleaned_data.get('name', '').strip()
+                delete = form.cleaned_data.get('DELETE', False)
+                if name and not delete:
                     filled_forms += 1
-        
+
         if filled_forms < 2:
-            raise forms.ValidationError('You must provide at least two choices with a name.')
+            raise forms.ValidationError(
+                'You must provide at least two choices with a name.'
+            )
+
 
 # Inline formset for choices related to a poll
 ChoiceFormSet = inlineformset_factory(
-    Poll, 
-    Choice, 
-    form=ChoiceForm, 
-    formset=BaseChoiceFormSet, 
-    extra=0, 
-    min_num=2, 
-    validate_min=True, 
+    Poll,
+    Choice,
+    form=ChoiceForm,
+    formset=BaseChoiceFormSet,
+    extra=0,
+    min_num=2,
+    validate_min=False,  # Custom clean handles validation
     can_delete=False
 )
