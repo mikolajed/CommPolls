@@ -8,6 +8,13 @@ class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
     avatar = forms.ImageField(required=False)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].help_text = ''  # Remove default help text
+        for field in self.fields.values():
+            if field.required and field.label:
+                field.label = f"{field.label}*"
+
     class Meta:
         model = User
         fields = ("username", "email", "password1", "password2")  # avatar handled separately

@@ -245,6 +245,24 @@ def poll_results_api(request, poll_id):
     return JsonResponse(results)
 
 
+def validate_username(request):
+    """Check if a username is already taken."""
+    username = request.GET.get('username', None)
+    data = {
+        'is_taken': User.objects.filter(username__iexact=username).exists()
+    }
+    return JsonResponse(data)
+
+
+def validate_email(request):
+    """Check if an email is already taken."""
+    email = request.GET.get('email', None)
+    data = {
+        'is_taken': User.objects.filter(email__iexact=email).exists()
+    }
+    return JsonResponse(data)
+
+
 def signup(request):
     """Sign-up view for new users."""
     if request.method == "POST":

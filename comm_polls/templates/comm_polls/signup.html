@@ -7,15 +7,52 @@
         <h1>Create an Account</h1>
         <form method="post" enctype="multipart/form-data" style="text-align: left;">
             {% csrf_token %}
-            {% for field in form %}
-                <div class="form-group">
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {{ field.errors }}
-                </div>
+
+            {# Loop through non-password fields #}
+            {% for field in form.visible_fields %}
+                {% if 'password' not in field.name %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.name == 'username' %}
+                            <small id="username-validation-message" class="validation-message"></small>
+                        {% elif field.name == 'email' %}
+                            <small id="email-validation-message" class="validation-message"></small>
+                        {% endif %}
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
             {% endfor %}
-            <button type="submit">Sign Up</button>
+
+            {# Manually render password fields with toggles #}
+            <div class="form-group">
+                {{ form.password1.label_tag }}
+                <div class="password-input-wrapper">
+                    {{ form.password1 }}
+                    <button type="button" class="password-toggle-btn">👁️</button>
+                </div>
+                <small class="form-help-text">{{ form.password1.help_text|safe }}</small>
+                {{ form.password1.errors }}
+            </div>
+            <div class="form-group">
+                {{ form.password2.label_tag }}
+                <div class="password-input-wrapper">
+                    {{ form.password2 }}
+                    <button type="button" class="password-toggle-btn">👁️</button>
+                </div>
+                {{ form.password2.errors }}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit">Sign Up</button>
+            </div>
         </form>
         <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
     </div>
+{% endblock %}
+
+{% block extra_head %}
+    {% load static %}
+    <script src="{% static 'comm_polls/scripts/signup-validation.js' %}" defer></script>
+    <script src="{% static 'comm_polls/scripts/password-visibility.js' %}" defer></script>
 {% endblock %}

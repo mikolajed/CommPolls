@@ -73,6 +73,19 @@ textarea {
     margin-top: 0.5rem;
 }
 
+.validation-message {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.9em;
+    min-height: 1.2em; /* Prevents layout shift */
+}
+.validation-message.taken {
+    color: var(--danger);
+}
+.validation-message.available {
+    color: #28a745;
+}
+
 .form-container {
     max-width: 700px;
     margin: 0 auto;
