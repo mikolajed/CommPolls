@@ -6,24 +6,18 @@ A simple **Django-based community polling application** that allows users to cre
 
 ## 🚀 Features
 
-- 🔐 **User Authentication** – Sign-up, login, logout, and password management.  
-- 👤 **Account Management** – Update username, email, and avatar.  
-- 📊 **Poll Creation** – Authenticated users can create polls with multiple choices.  
-- 🗑️ **Poll Management** – Edit, close, or delete polls.  
-- ✅ **Voting System** – One vote per user per poll.  
-- ⚡ **Real-Time Results** – Live poll updates via AJAX.  
-- 🕒 **Poll Lifecycle** – Upcoming, active, and completed polls.  
-- 🧍 **User Dashboards** – View "My Polls" and "My Votes."  
-- 🔍 **Advanced Filtering** – Filter polls by creator, date, and status.  
-
----
-
-## 🧭 Future Enhancements
-
-- Role-based permissions (Regular, Manager, Admin)  
-- Poll topics and tags  
-- Responsive UI (Bootstrap / Tailwind)  
-- Full test coverage & CI/CD improvements  
+- **Single Page Application** – Smooth navigation and dynamic content loading.
+- **User Authentication** – Sign-up, login, logout, and password management.  
+- **Account Management** – Update username, email, and avatar.  
+- **Poll Creation** – Authenticated users can create polls with multiple choices.  
+- **Poll Management** – Close or delete polls.  
+- **Voting System** – One vote per user per poll.  
+- **Poll Lifecycle** – Upcoming, active, and completed polls.  
+- **Advanced Filtering** – Filter polls by creator, date, and status.  
+- **Mobile Responsive** – View polls on mobile devices.
+- **Timer** – Countdown timer for upcoming polls and till poll closes.
+- **Role-based permissions** – Regular users, managers, and admins.
+- **Docker** – Run the app in a container.
 
 ---
 
@@ -55,7 +49,7 @@ We use Django’s built-in test runner and `coverage` for detailed reporting.
 
 ### 1. Install test dependencies
 ```bash
-pip install coverage pytest pytest-django
+pip install -r requirements.txt
 ```
 
 ### 2. Run all tests with coverage
@@ -72,9 +66,6 @@ python manage.py test comm_polls.tests
 
 # Integration tests
 python manage.py test comm_polls.integration_tests
-
-# End-to-End (E2E) tests
-python manage.py test comm_polls.e2e_tests
 ```
 
 ### 4. View HTML coverage report
@@ -151,13 +142,3 @@ python manage.py createsuperuser
 
 Then open:  
 👉 **http://127.0.0.1:8000/**
-
----
-
-## 🧠 License
-
-This project is licensed under the **MIT License** — free to use and modify.
-
----
-
-**CommPolls** — Simple, scalable, and community-driven polls for everyone 🗳️
