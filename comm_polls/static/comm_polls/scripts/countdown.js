@@ -17,20 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (distance <= 0) {
             clearInterval(countdownInterval);
-            // Use AJAX to fetch the vote form and replace the content
-            fetch(voteUrl)
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newContent = doc.querySelector('.container').innerHTML;
-                    document.querySelector('.container').innerHTML = newContent;
-                })
-                .catch(error => {
-                    console.error('Error fetching vote page:', error);
-                    // Fallback to a simple redirect if AJAX fails
-                    window.location.href = voteUrl;
-                });
+            // Use the global SPA navigation function to load the vote page.
+            // This ensures that all necessary scripts for the vote page are re-initialized.
+            if (window.spaNavigate) {
+                window.spaNavigate(voteUrl);
+            } else {
+                // Fallback to a full page reload if spaNavigate is not available
+                window.location.href = voteUrl;
+            }
             return;
         }
 

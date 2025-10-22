@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const loadContent = (url, pushState = true) => {
+        // If content container doesn't exist, do a full page load
+        if (!contentContainer) { window.location.href = url; return; }
+
         // Start the fade-out animation on the content container
         contentContainer.style.opacity = '0';
 
@@ -71,6 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         }, 200); // This delay should match the CSS transition duration
     };
+
+    // Expose loadContent to the global scope to be used by other scripts
+    window.spaNavigate = loadContent;
 
     // Use event delegation on the document body to handle all internal links
     document.body.addEventListener('click', (e) => {
