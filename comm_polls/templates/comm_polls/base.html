@@ -32,7 +32,7 @@
                 <a href="{% url 'comm_polls:polls' %}">My Polls</a>
                 <a href="{% url 'comm_polls:votes' %}">My Votes</a>
                 <a href="{% url 'comm_polls:create_poll' %}">Create Poll</a>
-                {% if is_manager %}
+                {% if user.is_superuser %}
                     <a href="{% url 'comm_polls:manage_requests' %}">Manage Requests</a>
                 {% endif %}
             </nav>

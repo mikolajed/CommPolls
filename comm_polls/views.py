@@ -47,10 +47,15 @@ def home(request):
     if sort_by in ['end_date', 'start_date', 'name', '-created_at']:
         polls = polls.order_by(sort_by)
 
+    is_manager = False
+    if request.user.is_authenticated:
+        is_manager = request.user.is_superuser or request.user.groups.filter(name='Managers').exists()
+
     context = {
         'polls': polls,
         'filters': request.GET,
         'voted_poll_ids': voted_poll_ids,
+        'is_manager': is_manager,
     }
     return render(request, "comm_polls/home.html", context)
 
@@ -125,8 +130,8 @@ def request_manager_status(request):
 
 @login_required
 def manage_requests(request):
-    # Ensure user is a manager
-    if not (request.user.is_superuser or request.user.groups.filter(name='Managers').exists()):
+    # Ensure user is a superuser
+    if not request.user.is_superuser:
         messages.error(request, "You don't have permission to access this page.")
         return redirect('comm_polls:home')
 

@@ -3,32 +3,26 @@ services:
     build: .
     image: mikolajed/commpolls:latest
     command: >
-      sh -c "python manage.py collectstatic --noinput &&
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
              gunicorn config.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
       - "8000:8000"
-    environment:
-      - SECRET_KEY=your-super-secret-key-for-development
-      - DEBUG=0
-      - DB_NAME=commpolls_db
-      - DB_USER=commpolls_user
-      - DB_PASSWORD=commpolls_pass
-      - DB_HOST=db
-      - DB_PORT=5432
-      - ALLOWED_HOSTS=* # WARNING: Allows all hosts. For better security, replace with your domain name.
+    env_file:
+      - .env
     depends_on:
       - db
 
   db:
     image: postgres:14
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=commpolls_db
-      - POSTGRES_USER=commpolls_user
-      - POSTGRES_PASSWORD=commpolls_pass
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
 
 volumes:
   postgres_data:
