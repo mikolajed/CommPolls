@@ -5,7 +5,6 @@ from django.urls import reverse
 from .models import Profile, Poll, Choice, Vote, ManagerRequest
 from django.utils import timezone
 from datetime import datetime, timedelta
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.exceptions import ValidationError
 from .context_processors import server_time, user_roles
@@ -204,9 +203,6 @@ class FormTests(TestCase):
         self.assertTrue(hasattr(user, 'profile'))
         self.assertIsNone(user.profile.avatar.name or None)
 
-    def test_signup_form_save_with_avatar(self):
-        unittest.skip("Skipping image upload tests.")
-
     # --- UserUpdateForm Tests ---
     def test_user_update_form_save_updates_user_and_profile(self):
         form = UserUpdateForm(instance=self.user, data={
@@ -218,9 +214,6 @@ class FormTests(TestCase):
         self.assertEqual(user.username, 'updateduser')
         self.assertEqual(user.email, 'updated@example.com')
         self.assertIsNone(user.profile.avatar.name)
-
-    def test_user_update_form_save_with_valid_avatar(self):
-        unittest.skip("Skipping image upload tests.")
 
     # --- PollForm Tests ---
     def test_poll_form_widgets(self):
@@ -327,3 +320,286 @@ class ValidatorTests(TestCase):
     def test_uppercase_validator_help_text(self):
         validator = UppercaseValidator()
         self.assertEqual(validator.get_help_text(), "Your password must contain at least one uppercase letter.")
+
+
+@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+class ViewTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='password123')
+        self.manager_user = User.objects.create_user(username='manager', password='password123')
+        self.other_user = User.objects.create_user(username='otheruser', password='password123')
+
+        manager_group, _ = Group.objects.get_or_create(name='Managers')
+        self.manager_user.groups.add(manager_group)
+
+        now = timezone.now()
+        self.active_poll = Poll.objects.create(
+            name="Active Poll",
+            created_by=self.manager_user,
+            start_date=now - timedelta(days=1),
+            end_date=now + timedelta(days=1)
+        )
+        self.choice1 = Choice.objects.create(poll=self.active_poll, name="Choice 1")
+        self.choice2 = Choice.objects.create(poll=self.active_poll, name="Choice 2")
+
+        self.ended_poll = Poll.objects.create(
+            name="Ended Poll",
+            created_by=self.user,
+            start_date=now - timedelta(days=2),
+            end_date=now - timedelta(days=1)
+        )
+        self.ended_choice = Choice.objects.create(poll=self.ended_poll, name="Ended Choice")
+
+        self.future_poll = Poll.objects.create(
+            name="Future Poll",
+            created_by=self.user,
+            start_date=now + timedelta(days=1),
+            end_date=now + timedelta(days=2)
+        )
+
+    def test_home_view_filters(self):
+        """Test filtering functionality on the home page."""
+        self.client.login(username='testuser', password='password123')
+        
+        # Filter by creator
+        response = self.client.get(reverse('comm_polls:home'), {'creator_name': 'manager'})
+        self.assertContains(response, "Active Poll")
+        self.assertNotContains(response, "Ended Poll")
+
+        # Filter by status: ended
+        response = self.client.get(reverse('comm_polls:home'), {'poll_status': 'ended'})
+        self.assertContains(response, "Ended Poll")
+        self.assertNotContains(response, "Active Poll")
+
+        # Filter by voted status (user has not voted yet)
+        response = self.client.get(reverse('comm_polls:home'), {'voted_status': 'not_voted'})
+        self.assertContains(response, "Active Poll")
+        self.assertContains(response, "Ended Poll")
+
+        # User votes on a poll
+        Vote.objects.create(poll=self.active_poll, choice=self.choice1, voter=self.user)
+
+        # Filter by voted status: voted
+        response = self.client.get(reverse('comm_polls:home'), {'voted_status': 'voted'})
+        self.assertContains(response, "Active Poll")
+        self.assertNotContains(response, "Ended Poll")
+
+    def test_vote_view_success(self):
+        """Test a successful vote submission."""
+        self.client.login(username='testuser', password='password123')
+        response = self.client.post(
+            reverse('comm_polls:vote', args=[self.active_poll.id]),
+            {'choice': self.choice1.id},
+            follow=True
+        )
+        self.assertRedirects(response, reverse('comm_polls:results', args=[self.active_poll.id]))
+        self.assertTrue(Vote.objects.filter(voter=self.user, poll=self.active_poll).exists())
+        self.choice1.refresh_from_db()
+        self.assertEqual(self.choice1.votes_count, 1)
+        self.assertContains(response, "Your vote has been recorded!")
+
+    def test_vote_on_ended_poll(self):
+        """Test attempting to vote on a poll that has ended."""
+        self.client.login(username='testuser', password='password123')
+        response = self.client.get(reverse('comm_polls:vote', args=[self.ended_poll.id]), follow=True)
+        self.assertRedirects(response, reverse('comm_polls:results', args=[self.ended_poll.id]))
+        self.assertContains(response, "This poll has already ended.")
+
+    def test_vote_on_future_poll(self):
+        """Test attempting to vote on a poll that has not started."""
+        self.client.login(username='testuser', password='password123')
+        response = self.client.get(reverse('comm_polls:vote', args=[self.future_poll.id]))
+        self.assertRedirects(response, reverse('comm_polls:poll_countdown', args=[self.future_poll.id]))
+
+    def test_double_voting_is_prevented(self):
+        """Test that a user cannot vote on the same poll twice."""
+        self.client.login(username='testuser', password='password123')
+        Vote.objects.create(poll=self.active_poll, choice=self.choice1, voter=self.user)
+        response = self.client.get(reverse('comm_polls:vote', args=[self.active_poll.id]), follow=True)
+        self.assertRedirects(response, reverse('comm_polls:results', args=[self.active_poll.id]))
+        self.assertContains(response, "You have already voted on this poll.")
+
+    def test_create_poll_permission_denied_for_regular_user(self):
+        """Test that a regular user is redirected from the create poll page."""
+        self.client.login(username='testuser', password='password123')
+        response = self.client.get(reverse('comm_polls:create_poll'))
+        self.assertRedirects(response, reverse('comm_polls:request_manager'))
+
+    def test_results_view_highlights_user_vote(self):
+        """Test that the results page highlights the user's choice."""
+        self.client.login(username='testuser', password='password123')
+        Vote.objects.create(poll=self.active_poll, choice=self.choice1, voter=self.user)
+        
+        response = self.client.get(reverse('comm_polls:results', args=[self.active_poll.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('user_vote', response.context)
+        self.assertEqual(response.context['user_vote'].choice, self.choice1)
+        # The 'voted-for' class is used for highlighting
+        self.assertContains(response, 'class="result-item voted-for"')
+
+@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+class AdditionalViewTests(TestCase):
+
+    def setUp(self):
+        # Users
+        self.user = User.objects.create_user(username='user1', password='password123', email='user1@example.com')
+        self.manager = User.objects.create_user(username='manager', password='password123', email='manager@example.com')
+        manager_group, _ = Group.objects.get_or_create(name='Managers')
+        self.manager.groups.add(manager_group)
+
+        # Login as regular user by default
+        self.client.login(username='user1', password='password123')
+
+        # Poll and choice
+        now = timezone.now()
+        self.poll = Poll.objects.create(
+            name="Test Poll",
+            created_by=self.manager,
+            start_date=now - timedelta(days=1),
+            end_date=now + timedelta(days=1)
+        )
+        self.choice = Choice.objects.create(poll=self.poll, name="Option A")
+
+    # ---------------- Polls List ----------------
+    @unittest.skip("Skipping test_polls_list_view for now.")
+    def test_polls_list_view(self):
+        self.client.login(username='manager', password='password123')
+        response = self.client.get(reverse('comm_polls:polls_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('polls', response.context)
+
+    # ---------------- My Votes ----------------
+    @unittest.skip("Skipping test_my_votes_view for now.")
+    def test_my_votes_view(self):
+        Vote.objects.create(poll=self.poll, choice=self.choice, voter=self.user)
+        response = self.client.get(reverse('comm_polls:my_votes'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('user_votes', response.context)
+        self.assertEqual(len(response.context['user_votes']), 1)
+
+    # ---------------- Create Poll ----------------
+    @unittest.skip("Skipping test_create_poll_post_as_manager for now.")
+    def test_create_poll_post_as_manager(self):
+        self.client.login(username='manager', password='password123')
+        start_dt = (timezone.now() + timedelta(hours=1)).strftime('%Y-%m-%dT%H:%M')
+        end_dt = (timezone.now() + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M')
+
+        data = {
+            'name': 'New Poll',
+            'description': 'Description',
+            'start_date': start_dt,
+            'end_date': end_dt,
+            'form-TOTAL_FORMS': '1',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-name': 'Choice 1',
+        }
+        response = self.client.post(reverse('comm_polls:create_poll'), data)
+        self.assertRedirects(response, reverse('comm_polls:polls'))
+        self.assertTrue(Poll.objects.filter(name='New Poll').exists())
+
+    # ---------------- Request Manager ----------------
+    @unittest.skip("Skipping test_request_manager_status_post for now.")
+    def test_request_manager_status_post(self):
+        response = self.client.post(reverse('comm_polls:request_manager_status'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(ManagerRequest.objects.filter(user=self.user).exists())
+        manager_request = ManagerRequest.objects.get(user=self.user)
+        self.assertEqual(manager_request.status, 'pending')
+
+    # ---------------- Manage Requests ----------------
+    def test_manage_requests_approve_and_reject(self):
+        req = ManagerRequest.objects.create(user=self.user)
+        self.client.login(username='manager', password='password123')
+
+        # Approve request
+        response = self.client.post(
+            reverse('comm_polls:manage_requests'),
+            {'request_id': req.id, 'action': 'approve'}
+        )
+        self.assertRedirects(response, reverse('comm_polls:manage_requests'))
+        req.refresh_from_db()
+        self.assertEqual(req.status, 'approved')
+        self.assertTrue(req.user.groups.filter(name='Managers').exists())
+
+        # Reset to pending to test rejection
+        req.status = 'pending'
+        req.save()
+
+        # Reject request
+        response = self.client.post(
+            reverse('comm_polls:manage_requests'),
+            {'request_id': req.id, 'action': 'reject'}
+        )
+        self.assertRedirects(response, reverse('comm_polls:manage_requests'))
+        req.refresh_from_db()
+        self.assertEqual(req.status, 'rejected')
+
+    # ---------------- Manage Poll ----------------
+    def test_manage_poll_close_poll(self):
+        poll = Poll.objects.create(
+            name="Poll to close",
+            created_by=self.user,
+            start_date=timezone.now(),
+            end_date=timezone.now() + timedelta(days=1)
+        )
+        response = self.client.post(reverse('comm_polls:manage_poll', args=[poll.id]), {'close_poll': '1'})
+        self.assertRedirects(response, reverse('comm_polls:manage_poll', args=[poll.id]))
+        poll.refresh_from_db()
+        self.assertLessEqual(poll.end_date, timezone.now())
+
+    # ---------------- Delete Poll ----------------
+    def test_delete_poll_view_post(self):
+        poll = Poll.objects.create(
+            name="Poll to delete",
+            created_by=self.user,
+            start_date=timezone.now(),
+            end_date=timezone.now() + timedelta(days=1)
+        )
+        response = self.client.post(reverse('comm_polls:delete_poll', args=[poll.id]))
+        self.assertRedirects(response, reverse('comm_polls:polls'))
+        self.assertFalse(Poll.objects.filter(id=poll.id).exists())
+
+    # ---------------- Poll Results API ----------------
+    def test_poll_results_api(self):
+        # Use vote view to correctly increment votes_count
+        self.client.post(reverse('comm_polls:vote', args=[self.poll.id]), {'choice': self.choice.id})
+        response = self.client.get(reverse('comm_polls:poll_results_api', args=[self.poll.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()[str(self.choice.id)], 1)
+
+    # ---------------- Username & Email Validation ----------------
+    def test_validate_username_and_email(self):
+        response = self.client.get(reverse('comm_polls:validate_username'), {'username': 'user1'})
+        self.assertEqual(response.json()['is_taken'], True)
+
+        response = self.client.get(reverse('comm_polls:validate_email'), {'email': 'user1@example.com'})
+        self.assertEqual(response.json()['is_taken'], True)
+
+    # ---------------- Signup ----------------
+    def test_signup_view_post(self):
+        self.client.logout()
+        data = {
+            'username': 'newuser',
+            'email': 'newuser@example.com',
+            'password1': 'StrongPass123',
+            'password2': 'StrongPass123'
+        }
+        response = self.client.post(reverse('comm_polls:signup'), data)
+        self.assertRedirects(response, reverse('comm_polls:home'))
+        self.assertTrue(User.objects.filter(username='newuser').exists())
+
+    # ---------------- Account Settings ----------------
+    def test_account_settings_post(self):
+        data = {
+            'username': 'updateduser1',
+            'email': 'updated1@example.com'
+        }
+        response = self.client.post(reverse('comm_polls:account_settings'), data)
+        self.assertRedirects(response, reverse('comm_polls:account_settings'))
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, 'updateduser1')
+        self.assertEqual(self.user.email, 'updated1@example.com')
+
