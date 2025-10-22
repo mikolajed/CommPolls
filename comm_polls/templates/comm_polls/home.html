@@ -61,7 +61,11 @@
                                 {% if poll.has_ended %}
                                     <a href="{% url 'comm_polls:results' poll.id %}" class="button-link">View Results</a>
                                 {% elif poll.has_started %}
-                                    <a href="{% url 'comm_polls:vote' poll.id %}" class="button-link">Vote Now</a>
+                                    {% if poll.id in voted_poll_ids %}
+                                        <a href="{% url 'comm_polls:results' poll.id %}" class="button-link">See Live Results</a>
+                                    {% else %}
+                                        <a href="{% url 'comm_polls:vote' poll.id %}" class="button-link">Vote Now</a>
+                                    {% endif %}
                                 {% else %}
                                     <a href="{% url 'comm_polls:poll_countdown' poll.id %}" class="button-link secondary">View Countdown</a>
                                 {% endif %}

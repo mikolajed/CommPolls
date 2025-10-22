@@ -32,12 +32,16 @@ def home(request):
         elif poll_status == 'not_started':
             polls = polls.filter(start_date__gt=now)
 
+    voted_poll_ids = []
     if request.user.is_authenticated and voted_status:
         voted_poll_ids = request.user.user_votes.values_list('poll_id', flat=True)
         if voted_status == 'voted':
             polls = polls.filter(id__in=voted_poll_ids)
         elif voted_status == 'not_voted':
             polls = polls.exclude(id__in=voted_poll_ids)
+
+    if request.user.is_authenticated and not voted_poll_ids:
+        voted_poll_ids = list(request.user.user_votes.values_list('poll_id', flat=True))
 
     # Sorting logic
     if sort_by in ['end_date', 'start_date', 'name', '-created_at']:
@@ -46,6 +50,7 @@ def home(request):
     context = {
         'polls': polls,
         'filters': request.GET,
+        'voted_poll_ids': voted_poll_ids,
     }
     return render(request, "comm_polls/home.html", context)
 
