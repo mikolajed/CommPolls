@@ -86,6 +86,12 @@ def create_poll(request):
         if poll_form.is_valid() and choice_formset.is_valid():
             poll = poll_form.save(commit=False)
             poll.created_by = request.user
+
+            # Make datetimes timezone-aware before saving.
+            # This is crucial for correct comparisons with timezone.now().
+            poll.start_date = timezone.make_aware(poll.start_date)
+            poll.end_date = timezone.make_aware(poll.end_date)
+
             poll.save()
             # Save choices
             choice_formset.instance = poll
@@ -235,7 +241,10 @@ def poll_countdown(request, poll_id):
     poll = get_object_or_404(Poll, id=poll_id)
     if poll.has_started:
         return redirect('comm_polls:vote', poll_id=poll.id)
-    return render(request, "comm_polls/poll_countdown.html", {"poll": poll})
+    return render(request, "comm_polls/poll_countdown.html", {
+        "poll": poll,
+        "server_now": timezone.now().isoformat(), # Pass the pre-formatted time string
+    })
 
 
 def poll_results_api(request, poll_id):

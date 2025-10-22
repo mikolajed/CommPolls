@@ -46,7 +46,7 @@
             </ul>
         {% endif %}
 
-        <div id="main-content">
+        <div id="main-content" data-server-time="{{ server_now }}">
             {% block content %}{% endblock %}
         </div>
     </div>

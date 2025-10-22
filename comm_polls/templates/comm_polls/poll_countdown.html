@@ -3,10 +3,11 @@
 {% block title %}Poll Countdown{% endblock %}
 
 {% block content %}
-    <div class="countdown-container" 
-         data-start-time="{{ poll.start_date.isoformat }}" 
+    <div class="countdown-container"
+         data-start-time="{{ poll.start_date.isoformat }}"
          data-vote-url="{% url 'comm_polls:vote' poll.id %}"
-         data-poll-id="{{ poll.id }}">
+         data-poll-id="{{ poll.id }}"
+         data-server-time="{{ server_now }}"> {# Pass server's current time #}
         <h1>{{ poll.name }}</h1>
         <p>Voting begins in:</p>
         <div id="countdown-timer-dynamic" class="countdown-timer">

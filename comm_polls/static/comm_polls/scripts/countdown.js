@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!countdownContainer) return;
 
     const startTime = new Date(countdownContainer.dataset.startTime);
+    const serverTimeStr = countdownContainer.dataset.serverTime; // Get server's current time
     const voteUrl = countdownContainer.dataset.voteUrl;
     const pollId = countdownContainer.dataset.pollId;
 
@@ -11,8 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const minutesEl = document.getElementById('minutes');
     const secondsEl = document.getElementById('seconds');
 
+    // Calculate the initial offset between client and server time
+    const clientLoadTime = new Date();
+    const serverLoadTime = new Date(serverTimeStr);
+    const timeOffset = clientLoadTime.getTime() - serverLoadTime.getTime(); // Milliseconds difference
+
     const updateCountdown = () => {
-        const now = new Date();
+        // Adjust the client's current time by the calculated offset to match server's perspective
+        const now = new Date(new Date().getTime() - timeOffset);
         const distance = startTime - now;
 
         if (distance <= 0) {
