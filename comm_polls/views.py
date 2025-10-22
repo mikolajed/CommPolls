@@ -43,14 +43,9 @@ def home(request):
     if sort_by in ['end_date', 'start_date', 'name', '-created_at']:
         polls = polls.order_by(sort_by)
 
-    is_manager = False
-    if request.user.is_authenticated:
-        is_manager = request.user.is_superuser or request.user.groups.filter(name='Managers').exists()
-
     context = {
         'polls': polls,
         'filters': request.GET,
-        'is_manager': is_manager,
     }
     return render(request, "comm_polls/home.html", context)
 

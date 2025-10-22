@@ -32,7 +32,7 @@
                 <a href="{% url 'comm_polls:polls' %}">My Polls</a>
                 <a href="{% url 'comm_polls:votes' %}">My Votes</a>
                 <a href="{% url 'comm_polls:create_poll' %}">Create Poll</a>
-                {% if user.is_superuser or 'Managers' in user.groups.all.values_list.name.0 %}
+                {% if is_manager %}
                     <a href="{% url 'comm_polls:manage_requests' %}">Manage Requests</a>
                 {% endif %}
             </nav>
@@ -46,7 +46,10 @@
             </ul>
         {% endif %}
 
-        <div id="main-content" data-server-time="{{ server_now }}">
+        <div id="main-content"
+             data-server-time="{{ server_now }}"
+             data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
+             data-login-url="{% url 'login' %}">
             {% block content %}{% endblock %}
         </div>
     </div>

@@ -1,35 +1,56 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const countdownContainer = document.querySelector('.countdown-container');
-    if (!countdownContainer) return;
+console.log('[Countdown] Script loaded.');
 
-    const startTime = new Date(countdownContainer.dataset.startTime);
-    const serverTimeStr = countdownContainer.dataset.serverTime; // Get server's current time
-    const voteUrl = countdownContainer.dataset.voteUrl;
-    const pollId = countdownContainer.dataset.pollId;
+window.initCountdown = function initCountdown() {
+    console.log('[Countdown] Initialization triggered.');
 
-    const daysEl = document.getElementById('days');
-    const hoursEl = document.getElementById('hours');
-    const minutesEl = document.getElementById('minutes');
-    const secondsEl = document.getElementById('seconds');
+    // Avoid duplicate intervals
+    if (window.currentCountdownInterval) {
+        clearInterval(window.currentCountdownInterval);
+        window.currentCountdownInterval = null;
+    }
 
-    // Calculate the initial offset between client and server time
-    const clientLoadTime = new Date();
+    const container = document.querySelector('.countdown-container');
+    if (!container) {
+        console.warn('[Countdown] Container not found. Retrying...');
+        return setTimeout(initCountdown, 100); // Retry until DOM is ready
+    }
+
+    const startTimeStr = container.dataset.startTime;
+    const serverTimeStr = container.dataset.serverTime;
+    const voteUrl = container.dataset.voteUrl;
+
+    if (!startTimeStr || !serverTimeStr) {
+        console.error('[Countdown] Missing startTime or serverTime.');
+        return;
+    }
+
+    const startTime = new Date(startTimeStr);
     const serverLoadTime = new Date(serverTimeStr);
-    const timeOffset = clientLoadTime.getTime() - serverLoadTime.getTime(); // Milliseconds difference
+    const clientLoadTime = new Date();
+    const timeOffset = clientLoadTime.getTime() - serverLoadTime.getTime();
+
+    const daysEl = container.querySelector('#days');
+    const hoursEl = container.querySelector('#hours');
+    const minutesEl = container.querySelector('#minutes');
+    const secondsEl = container.querySelector('#seconds');
+
+    if (!daysEl || !hoursEl || !minutesEl || !secondsEl) {
+        console.warn('[Countdown] Missing timer elements. Retrying...');
+        return setTimeout(initCountdown, 100);
+    }
 
     const updateCountdown = () => {
-        // Adjust the client's current time by the calculated offset to match server's perspective
         const now = new Date(new Date().getTime() - timeOffset);
         const distance = startTime - now;
 
         if (distance <= 0) {
-            clearInterval(countdownInterval);
-            // Use the global SPA navigation function to load the vote page.
-            // This ensures that all necessary scripts for the vote page are re-initialized.
+            clearInterval(window.currentCountdownInterval);
+            window.currentCountdownInterval = null;
+            console.log('[Countdown] Countdown finished — navigating.');
+
             if (window.spaNavigate) {
                 window.spaNavigate(voteUrl);
             } else {
-                // Fallback to a full page reload if spaNavigate is not available
                 window.location.href = voteUrl;
             }
             return;
@@ -46,6 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
         secondsEl.textContent = String(seconds).padStart(2, '0');
     };
 
-    const countdownInterval = setInterval(updateCountdown, 1000);
-    updateCountdown(); // Initial call
-});
+    // Start the countdown
+    window.currentCountdownInterval = setInterval(updateCountdown, 1000);
+    updateCountdown();
+};
+
+// Run on first load
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    window.initCountdown();
+} else {
+    document.addEventListener('DOMContentLoaded', window.initCountdown);
+}
