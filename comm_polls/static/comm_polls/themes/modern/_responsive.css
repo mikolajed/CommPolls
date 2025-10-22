@@ -11,6 +11,11 @@
     h1 { font-size: 1.8em; }
     h2 { font-size: 1.5em; }
 
+    /* Hide username greeting on mobile for a cleaner header */
+    .header strong {
+        display: none;
+    }
+
     /* Make filter form stack vertically */
     .filter-form {
         display: flex;
