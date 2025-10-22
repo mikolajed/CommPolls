@@ -21,6 +21,15 @@ select:focus, input:focus, textarea:focus {
     box-shadow: 0 0 0 3px var(--focus-shadow-color);
 }
 
+/* Hint to the browser about the color scheme for native UI like date pickers */
+input[type="datetime-local"] {
+    color-scheme: light;
+}
+
+[data-theme="dark"] input[type="datetime-local"] {
+    color-scheme: dark;
+}
+
 textarea {
     resize: none;
     min-height: 100px;
