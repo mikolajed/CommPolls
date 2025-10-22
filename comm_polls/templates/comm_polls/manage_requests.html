@@ -1,0 +1,34 @@
+{% extends "comm_polls/base.html" %}
+
+{% block title %}Manage Requests{% endblock %}
+
+{% block content %}
+    <h1>Manager Requests</h1>
+
+    {% if requests %}
+        <ul class="poll-list">
+            {% for request in requests %}
+                <li class="poll-list-item">
+                    <div class="poll-info">
+                        <strong>{{ request.user.username }}</strong>
+                        <p>Requested on: {{ request.requested_at|date:"F d, Y" }}</p>
+                    </div>
+                    <div class="poll-actions">
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="request_id" value="{{ request.id }}">
+                            <button type="submit" name="action" value="approve" class="button-link">Approve</button>
+                        </form>
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="request_id" value="{{ request.id }}">
+                            <button type="submit" name="action" value="reject" class="button-link danger">Reject</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>There are no pending manager requests.</p>
+    {% endif %}
+{% endblock %}

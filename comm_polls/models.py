@@ -11,12 +11,6 @@ class Poll(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    is_suspended = models.BooleanField(default=False)
-
-    class Meta:
-        permissions = [
-            ("can_suspend_poll", "Can suspend poll"),
-        ]
 
     def __str__(self):
         return self.name
@@ -64,6 +58,21 @@ class Vote(models.Model):
 
     def __str__(self):
         return f"{self.voter} voted on {self.poll}"
+
+
+class ManagerRequest(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='manager_request')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    requested_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Manager request from {self.user.username} - {self.status}"
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

@@ -31,6 +31,9 @@
                 <a href="{% url 'comm_polls:polls' %}">My Polls</a>
                 <a href="{% url 'comm_polls:votes' %}">My Votes</a>
                 <a href="{% url 'comm_polls:create_poll' %}">Create Poll</a>
+                {% if user.is_superuser or 'Managers' in user.groups.all.values_list.name.0 %}
+                    <a href="{% url 'comm_polls:manage_requests' %}">Manage Requests</a>
+                {% endif %}
             </nav>
         {% endif %}
 

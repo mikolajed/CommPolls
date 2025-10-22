@@ -1,6 +1,10 @@
 {% extends "comm_polls/base.html" %}
 
 {% block content %}
+    {% comment %}
+        Helper variable to avoid checking permissions multiple times.
+        Superusers are implicitly managers.
+    {% endcomment %}
     {% if user.is_authenticated %}
         <hr>
 
@@ -44,10 +48,10 @@
             <ul class="poll-list">
                 {% for poll in polls %}
                     <li class="poll-list-wrapper">
-                        <div class="poll-list-item {% if poll.is_suspended %}suspended{% endif %}">
+                        <div class="poll-list-item">
                             <div class="poll-info">
                                 <strong>{{ poll.name }}</strong>
-                                <p>Created by: {{ poll.created_by.username }} {% if poll.is_suspended %}<span class="suspended-label">(Suspended)</span>{% endif %}</p>
+                                <p>Created by: {{ poll.created_by.username }}</p>
                             </div>
                             <div class="poll-actions">
                                 {% if poll.has_ended %}
@@ -59,17 +63,16 @@
                                 {% endif %}
                             </div>
                         </div>
-                        {% if user.is_authenticated and perms.comm_polls.can_suspend_poll %}
-                            <form action="{% url 'comm_polls:suspend_poll' poll.id %}" method="post" class="suspend-form">
-                                {% csrf_token %}
-                                <button type="submit">{% if poll.is_suspended %}Unsuspend{% else %}Suspend{% endif %}</button>
-                            </form>
-                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
             <p>No polls match your filter criteria.</p>
+        {% endif %}
+
+        {% if not is_manager %}
+            <hr>
+            <p style="text-align: center;">Want to create your own polls? <a href="{% url 'comm_polls:request_manager' %}">Become a manager</a>.</p>
         {% endif %}
     {% else %}
         <!-- Guest View -->

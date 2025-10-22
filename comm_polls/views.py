@@ -1,13 +1,13 @@
 from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
+from django.contrib.auth import login, models as auth_models
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db import transaction
 from .forms import SignUpForm, UserUpdateForm, PollForm, ChoiceFormSet
-from .models import Poll, Choice, Vote
+from .models import Poll, Choice, Vote, ManagerRequest
 
 def home(request):
     """Home page showing all polls with filtering."""
@@ -38,13 +38,14 @@ def home(request):
         elif voted_status == 'not_voted':
             polls = polls.exclude(id__in=voted_poll_ids)
 
-    # If the user is not a manager, hide suspended polls
-    if not request.user.has_perm('comm_polls.can_suspend_poll'):
-        polls = polls.filter(is_suspended=False)
+    is_manager = False
+    if request.user.is_authenticated:
+        is_manager = request.user.is_superuser or request.user.groups.filter(name='Managers').exists()
 
     context = {
         'polls': polls,
         'filters': request.GET,
+        'is_manager': is_manager,
     }
     return render(request, "comm_polls/home.html", context)
 
@@ -69,6 +70,11 @@ def my_votes(request):
 
 @login_required
 def create_poll(request):
+    # Check if user is a manager (in 'Managers' group or superuser)
+    is_manager = request.user.is_superuser or request.user.groups.filter(name='Managers').exists()
+    if not is_manager:
+        return redirect('comm_polls:request_manager')
+
     if request.method == 'POST':
         poll_form = PollForm(request.POST)
         choice_formset = ChoiceFormSet(request.POST)
@@ -93,6 +99,52 @@ def create_poll(request):
 
 
 @login_required
+def request_manager_status(request):
+    is_manager = request.user.is_superuser or request.user.groups.filter(name='Managers').exists()
+    if is_manager:
+        # Managers should just go to the create poll page
+        return redirect('comm_polls:create_poll')
+
+    manager_request = ManagerRequest.objects.filter(user=request.user).first()
+
+    if request.method == 'POST':
+        if not manager_request:
+            ManagerRequest.objects.create(user=request.user)
+            messages.success(request, 'Your request to become a manager has been submitted.')
+            # Re-fetch the request object to show the pending status
+            manager_request = ManagerRequest.objects.get(user=request.user)
+
+    return render(request, 'comm_polls/request_manager.html', {'manager_request': manager_request})
+
+
+@login_required
+def manage_requests(request):
+    # Ensure user is a manager
+    if not (request.user.is_superuser or request.user.groups.filter(name='Managers').exists()):
+        messages.error(request, "You don't have permission to access this page.")
+        return redirect('comm_polls:home')
+
+    if request.method == 'POST':
+        request_id = request.POST.get('request_id')
+        action = request.POST.get('action')
+        manager_request = get_object_or_404(ManagerRequest, id=request_id)
+
+        if action == 'approve':
+            manager_group, created = auth_models.Group.objects.get_or_create(name='Managers')
+            manager_request.user.groups.add(manager_group)
+            manager_request.status = 'approved'
+            messages.success(request, f"User {manager_request.user.username} has been promoted to Manager.")
+        elif action == 'reject':
+            manager_request.status = 'rejected'
+            messages.warning(request, f"Request from {manager_request.user.username} has been rejected.")
+        
+        manager_request.save()
+        return redirect('comm_polls:manage_requests')
+
+    pending_requests = ManagerRequest.objects.filter(status='pending').select_related('user')
+    return render(request, 'comm_polls/manage_requests.html', {'requests': pending_requests})
+
+@login_required
 def manage_poll(request, poll_id):
     poll = get_object_or_404(Poll, id=poll_id, created_by=request.user)
 
@@ -114,16 +166,6 @@ def delete_poll(request, poll_id):
         messages.success(request, 'Poll deleted successfully.')
         return redirect('comm_polls:polls')
     return render(request, 'comm_polls/delete_poll.html', {'poll': poll})
-
-
-@login_required
-@permission_required('comm_polls.can_suspend_poll', raise_exception=True)
-def suspend_poll(request, poll_id):
-    poll = get_object_or_404(Poll, pk=poll_id)
-    # Toggle the suspended state
-    poll.is_suspended = not poll.is_suspended
-    poll.save()
-    return redirect('comm_polls:home')
 
 
 @login_required

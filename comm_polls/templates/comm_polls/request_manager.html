@@ -1,0 +1,28 @@
+{% extends "comm_polls/base.html" %}
+
+{% block title %}Become a Manager{% endblock %}
+
+{% block content %}
+    <div class="guest-view">
+        <h1>Manager Status</h1>
+
+        {% if manager_request %}
+            <p>Your request to become a manager is currently: <strong>{{ manager_request.get_status_display }}</strong>.</p>
+            {% if manager_request.status == 'pending' %}
+                <p>An administrator will review your request shortly.</p>
+            {% elif manager_request.status == 'rejected' %}
+                <p>Your request was not approved at this time.</p>
+            {% endif %}
+        {% else %}
+            <p>Only approved managers can create new polls.</p>
+            <p>Click the button below to submit a request to become a manager.</p>
+            <hr>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <button type="submit">Request to Become a Manager</button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}
