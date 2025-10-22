@@ -83,7 +83,7 @@
         <!-- Guest View -->
         <div class="guest-view">
             <h1 class="guest-title">Welcome to CommPolls</h1>
-            <p class="guest-subtitle">Create, share, and vote on polls instantly.</p>
+            <p class="guest-subtitle" id="typing-subtitle">&nbsp;</p>
             <div class="guest-actions">
                 <a href="{% url 'comm_polls:signup' %}" class="button-link">Sign Up</a>
                 <a href="{% url 'login' %}" class="button-link secondary">Log In</a>
@@ -147,5 +147,6 @@
     {% if not user.is_authenticated %}
         {% load static %}
         <script src="{% static 'comm_polls/scripts/showcase.js' %}" defer></script>
+        <script src="{% static 'comm_polls/scripts/typing-animation.js' %}" defer></script>
     {% endif %}
 {% endblock %}
