@@ -24,7 +24,10 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-default-key")
 DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
-
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'https://2553afe24247.ngrok-free.app',
+]
 # ---------------------------------------------------------------------
 # Application definition
 # ---------------------------------------------------------------------
@@ -125,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # ---------------------------------------------------------------------
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Warsaw"
 USE_I18N = True
 USE_TZ = True
 

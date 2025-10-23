@@ -29,18 +29,6 @@ git clone https://github.com/mikolajed/CommPolls.git
 cd CommPolls
 ```
 
-### 2. Set up Python environment
-> ⚠️ Django 4.2 is **not compatible with Python 3.14**.  
-Use **Python 3.12** (recommended) or **Python 3.11**.
-
-```bash
-pyenv install 3.12.6
-pyenv local 3.12.6
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
 ---
 
 ## 🧪 Running Tests
@@ -76,7 +64,7 @@ xdg-open htmlcov/index.html  # Linux
 
 ---
 
-## 🐳 Deploying with Docker
+## 🐳 Run with Docker
 
 You can run CommPolls entirely in Docker — no local setup needed.
 
@@ -117,28 +105,18 @@ docker compose exec web coverage report -m
 Create a `.env` file in your project root:
 
 ```
+# Django settings
 DEBUG=True
-SECRET_KEY=your-secret-key
+SECRET_KEY=your-super-secret-key-for-development-change-for-prod
 ALLOWED_HOSTS=localhost,127.0.0.1
-DATABASE_URL=sqlite:///db.sqlite3
+
+# Email backend (optional)
+EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+
+# PostgreSQL Database settings
+DB_NAME=commpolls_db
+DB_USER=commpolls_user
+DB_PASSWORD=commpolls_pass
+DB_HOST=db       
+DB_PORT=5432
 ```
-
----
-
-## 💡 Quick Start Summary
-
-```bash
-# Setup
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-python manage.py migrate
-
-# Run locally
-python manage.py runserver
-
-# Create superuser
-python manage.py createsuperuser
-```
-
-Then open:  
-👉 **http://127.0.0.1:8000/**
