@@ -2,11 +2,6 @@
 .git
 .gitignore
 
-# Docker
-.dockerignore
-Dockerfile
-docker-compose.yml
-
 # Python
 __pycache__/
 *.pyc
@@ -21,3 +16,7 @@ htmlcov/
 
 # OS-specific
 .DS_Store
+
+# Media & Static
+media
+staticfiles
